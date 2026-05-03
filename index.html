@@ -14,15 +14,11 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans TC',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;}
-
-/* grid bg */
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;
   background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:48px 48px;opacity:.25;pointer-events:none;z-index:0;}
+  background-size:48px 48px;opacity:.2;pointer-events:none;z-index:0;}
 
-/* ── HEADER ── */
 header{position:sticky;top:0;z-index:200;background:#05080fee;
   backdrop-filter:blur(14px);border-bottom:1px solid var(--bdr2);
   display:flex;align-items:center;gap:10px;padding:0 14px;height:48px;}
@@ -35,12 +31,11 @@ header{position:sticky;top:0;z-index:200;background:#05080fee;
 .hlive{display:flex;align-items:center;gap:5px;flex-shrink:0;}
 .ldot{width:6px;height:6px;border-radius:50%;background:var(--textlo);
   animation:blip 1.8s ease-in-out infinite;}
-@keyframes blip{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.7);}}
+@keyframes blip{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.65);}}
 .ltxt{font-family:var(--mono);font-size:.58rem;color:var(--textlo);letter-spacing:1px;}
 
-/* ── TABS ── */
 .tabs{display:flex;border-bottom:1px solid var(--bdr2);background:var(--bg2);}
-.tab{flex:1;padding:11px 6px;font-family:var(--mono);font-size:.6rem;letter-spacing:.5px;
+.tab{flex:1;padding:11px 4px;font-family:var(--mono);font-size:.58rem;
   color:var(--textlo);cursor:pointer;border:none;background:none;
   border-bottom:2px solid transparent;transition:all .2s;text-align:center;}
 .tab.t-all.on{color:var(--neu);border-color:var(--neu);}
@@ -48,145 +43,140 @@ header{position:sticky;top:0;z-index:200;background:#05080fee;
 .tab.t-short.on{color:var(--short);border-color:var(--short);}
 .tab.t-watch.on{color:var(--watch);border-color:var(--watch);}
 
-/* ── SCAN BAR ── */
-.scanbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--border);}
-.sb-label{font-family:var(--mono);font-size:.58rem;color:var(--textlo);}
+.scanbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  padding:9px 14px;background:var(--panel);border-bottom:1px solid var(--border);}
+.sb-label{font-family:var(--mono);font-size:.56rem;color:var(--textlo);}
 select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
-  font-family:var(--mono);font-size:.62rem;padding:5px 8px;border-radius:3px;cursor:pointer;}
-.prog-wrap{flex:1;min-width:60px;height:2px;background:var(--bdr2);border-radius:1px;overflow:hidden;}
-.prog-fill{height:100%;background:var(--long);border-radius:1px;width:0%;transition:width .3s;}
-.prog-txt{font-family:var(--mono);font-size:.56rem;color:var(--textlo);white-space:nowrap;}
+  font-family:var(--mono);font-size:.6rem;padding:5px 7px;border-radius:3px;cursor:pointer;}
+.prog-wrap{flex:1;min-width:50px;height:2px;background:var(--bdr2);border-radius:1px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--long);width:0%;transition:width .3s;}
+.prog-txt{font-family:var(--mono);font-size:.54rem;color:var(--textlo);white-space:nowrap;}
 .scan-btn{padding:7px 14px;border-radius:3px;border:1px solid var(--long);
   background:#00f0a010;color:var(--long);font-family:var(--mono);font-size:.65rem;
-  letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+  letter-spacing:1px;cursor:pointer;white-space:nowrap;}
 .scan-btn:active{background:#00f0a025;}
 .scan-btn:disabled{opacity:.35;cursor:not-allowed;}
 
-/* ── STATS ── */
 .statrow{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border);}
 .sc{padding:10px 6px;border-right:1px solid var(--border);text-align:center;}
 .sc:nth-child(3n){border-right:none;}
 .sc:nth-child(n+4){border-top:1px solid var(--border);}
-.sc-val{font-family:var(--mono);font-size:1.2rem;font-weight:700;}
-.sc-lbl{font-size:.52rem;letter-spacing:1px;color:var(--textlo);margin-top:2px;}
+.sc-val{font-family:var(--mono);font-size:1.15rem;font-weight:700;}
+.sc-lbl{font-size:.5rem;letter-spacing:1px;color:var(--textlo);margin-top:2px;}
 .c-long{color:var(--long);}
 .c-short{color:var(--short);}
 .c-watch{color:var(--watch);}
-.c-neu{color:var(--neu);}
 
-.errbox{margin:10px 14px;padding:10px 14px;background:#ff335508;
+.errbox{margin:10px 14px;padding:10px;background:#ff335508;
   border:1px solid #ff335530;border-radius:3px;font-family:var(--mono);
-  font-size:.65rem;color:var(--short);display:none;}
-.ts{padding:5px 14px;font-family:var(--mono);font-size:.55rem;
-  color:var(--textlo);border-bottom:1px solid var(--border);}
+  font-size:.62rem;color:var(--short);display:none;}
+.ts{padding:5px 14px;font-family:var(--mono);font-size:.53rem;color:var(--textlo);border-bottom:1px solid var(--border);}
 
-/* ── SORT BAR ── */
 .sortbar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px;
-  background:var(--bg2);border-bottom:1px solid var(--border);}
-.sort-btn{font-family:var(--mono);font-size:.55rem;padding:3px 9px;
+  background:var(--bg2);border-bottom:1px solid var(--border);align-items:center;}
+.sort-lbl{font-family:var(--mono);font-size:.53rem;color:var(--textlo);}
+.sort-btn{font-family:var(--mono);font-size:.53rem;padding:3px 9px;
   border-radius:2px;border:1px solid var(--border);background:transparent;
-  color:var(--textlo);cursor:pointer;transition:all .15s;}
+  color:var(--textlo);cursor:pointer;}
 .sort-btn.active{border-color:var(--neu);color:var(--neu);}
-.sort-lbl{font-family:var(--mono);font-size:.55rem;color:var(--textlo);
-  display:flex;align-items:center;}
 
-/* ── CARDS ── */
-.cardlist{padding:0 0 80px;}
+.cardlist{padding:0 0 60px;}
+.load-state{padding:70px;text-align:center;color:var(--textlo);
+  font-family:var(--mono);font-size:.7rem;letter-spacing:2px;}
+.spin{display:inline-block;animation:sp 1s linear infinite;margin-right:6px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.empty{padding:50px;text-align:center;color:var(--textlo);}
 
-.coin-card{border-bottom:1px solid var(--border);padding:12px 14px;
-  cursor:pointer;transition:background .12s;position:relative;
-  animation:faderow .25s ease both;border-left:3px solid transparent;}
-@keyframes faderow{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
-.coin-card:active{background:#ffffff05;}
+.coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
+  cursor:pointer;border-left:3px solid transparent;animation:frow .22s ease both;}
+@keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.coin-card:active{background:#ffffff04;}
 .coin-card.row-long{border-left-color:var(--long);}
 .coin-card.row-short{border-left-color:var(--short);}
 .coin-card.row-watch{border-left-color:var(--watch);}
 
-/* card top row */
-.card-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
-.card-sym{font-family:var(--mono);font-weight:700;color:var(--texthi);font-size:.86rem;}
-.card-sym sub{color:var(--textlo);font-weight:400;font-size:.55rem;vertical-align:baseline;}
-.card-price{font-family:var(--mono);font-size:.75rem;color:var(--text);}
-.card-chg{font-family:var(--mono);font-size:.72rem;}
+.card-top{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap;}
+.card-sym{font-family:var(--mono);font-weight:700;color:var(--texthi);font-size:.84rem;}
+.card-sym sub{color:var(--textlo);font-weight:400;font-size:.52rem;vertical-align:baseline;}
+.card-price{font-family:var(--mono);font-size:.72rem;color:var(--text);}
+.card-chg{font-family:var(--mono);font-size:.7rem;}
 .pos{color:var(--long);}
 .neg{color:var(--short);}
-
-/* signal badge */
-.sig{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;
-  border-radius:2px;font-family:var(--mono);font-size:.6rem;letter-spacing:1px;
-  font-weight:700;border:1px solid;margin-left:auto;flex-shrink:0;}
+.sig{display:inline-flex;align-items:center;padding:3px 9px;border-radius:2px;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:1px;font-weight:700;
+  border:1px solid;margin-left:auto;flex-shrink:0;}
 .sig-long{color:var(--long);border-color:#00f0a055;background:#00f0a012;}
 .sig-short{color:var(--short);border-color:#ff335555;background:#ff335512;}
 .sig-watch{color:var(--watch);border-color:#ffaa0055;background:#ffaa0012;}
 .sig-none{color:var(--textlo);border-color:#1c2a42;background:transparent;}
 
-/* score bar */
-.score-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+/* EMA STATUS ROW */
+.ema-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap;}
+.ema-pill{font-family:var(--mono);font-size:.54rem;padding:2px 8px;border-radius:10px;
+  border:1px solid;font-weight:600;}
+.ep-above{color:var(--long);border-color:#00f0a045;background:#00f0a00e;}
+.ep-below{color:var(--short);border-color:#ff335545;background:#ff33550e;}
+.ep-mid{color:var(--watch);border-color:#ffaa0045;background:#ffaa000e;}
+.ema-dist{font-family:var(--mono);font-size:.5rem;color:var(--textlo);}
+
+.score-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
 .gbar{flex:1;height:3px;border-radius:2px;background:var(--bdr2);overflow:hidden;}
 .gfill{height:100%;border-radius:2px;transition:width .5s;}
 .gfill-long{background:var(--long);}
 .gfill-short{background:var(--short);}
 .gfill-watch{background:var(--watch);}
-.gnum{font-family:var(--mono);font-size:.58rem;color:var(--textlo);white-space:nowrap;}
+.gnum{font-family:var(--mono);font-size:.56rem;color:var(--textlo);white-space:nowrap;}
 
-/* chips */
-.chips{display:flex;gap:5px;flex-wrap:wrap;}
-.chip{font-family:var(--mono);font-size:.54rem;padding:2px 7px;
-  border-radius:2px;border:1px solid;white-space:nowrap;}
+.chips{display:flex;gap:4px;flex-wrap:wrap;}
+.chip{font-family:var(--mono);font-size:.52rem;padding:2px 6px;border-radius:2px;border:1px solid;white-space:nowrap;}
 .chip-long{color:var(--long);border-color:#00f0a040;background:#00f0a010;}
 .chip-short{color:var(--short);border-color:#ff335540;background:#ff335510;}
 .chip-watch{color:var(--watch);border-color:#ffaa0040;background:#ffaa0010;}
 .chip-neu{color:var(--textlo);border-color:#1c2a42;background:transparent;}
 
-/* ── EXPANDED DETAIL ── */
-.card-detail{display:none;margin-top:10px;padding:10px 12px;
+/* DETAIL */
+.card-detail{display:none;margin-top:10px;padding:10px 11px;
   background:var(--bg2);border:1px solid var(--bdr2);border-radius:4px;}
 .coin-card.expanded .card-detail{display:block;}
+.dtitle{font-family:var(--mono);font-size:.54rem;color:var(--textlo);
+  letter-spacing:1.5px;margin-bottom:7px;margin-top:6px;}
+.dtitle:first-child{margin-top:0;}
 
-.detail-title{font-family:var(--mono);font-size:.58rem;color:var(--textlo);
-  letter-spacing:1.5px;margin-bottom:8px;text-transform:uppercase;}
+.ema-detail{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:4px;}
+.edb{padding:7px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg);}
+.edb-lbl{font-family:var(--mono);font-size:.48rem;color:var(--textlo);}
+.edb-val{font-family:var(--mono);font-size:.75rem;font-weight:700;margin-top:2px;}
+.edb-sub{font-family:var(--mono);font-size:.46rem;margin-top:2px;}
+.ev-long{color:var(--long);}
+.ev-short{color:var(--short);}
+.ev-neu{color:var(--text);}
 
-/* entry price grid */
-.entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.entry-box{padding:8px 10px;border-radius:3px;border:1px solid;}
-.entry-long{border-color:#00f0a030;background:#00f0a008;}
-.entry-short{border-color:#ff335530;background:#ff335508;}
-.entry-label{font-family:var(--mono);font-size:.52rem;color:var(--textlo);letter-spacing:.5px;}
-.entry-price{font-family:var(--mono);font-size:.88rem;font-weight:700;margin-top:3px;}
-.entry-price-long{color:var(--long);}
-.entry-price-short{color:var(--short);}
-.entry-sub{font-family:var(--mono);font-size:.5rem;color:var(--textlo);margin-top:2px;}
+.entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px;}
+.ebox{padding:8px 9px;border-radius:3px;border:1px solid;}
+.ebox-l{border-color:#00f0a030;background:#00f0a008;}
+.ebox-s{border-color:#ff335530;background:#ff335508;}
+.elbl{font-family:var(--mono);font-size:.48rem;color:var(--textlo);}
+.eprice{font-family:var(--mono);font-size:.84rem;font-weight:700;margin-top:3px;}
+.ep-l{color:var(--long);}
+.ep-s{color:var(--short);}
+.esub{font-family:var(--mono);font-size:.46rem;color:var(--textlo);margin-top:2px;}
 
-/* risk table */
-.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
-.risk-item{padding:6px 8px;background:var(--bg);border-radius:2px;border:1px solid var(--border);}
-.risk-key{font-family:var(--mono);font-size:.5rem;color:var(--textlo);letter-spacing:.5px;}
-.risk-val{font-family:var(--mono);font-size:.72rem;font-weight:600;margin-top:2px;}
-.rv-long{color:var(--long);}
-.rv-short{color:var(--short);}
-.rv-neu{color:var(--text);}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.ritem{padding:6px 8px;background:var(--bg);border-radius:2px;border:1px solid var(--border);}
+.rkey{font-family:var(--mono);font-size:.46rem;color:var(--textlo);}
+.rval{font-family:var(--mono);font-size:.68rem;font-weight:600;margin-top:2px;}
+.rv-l{color:var(--long);}
+.rv-s{color:var(--short);}
+.rv-n{color:var(--text);}
 
-.disclaimer{font-family:var(--mono);font-size:.5rem;color:var(--textlo);
-  margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5;}
+.disc{font-family:var(--mono);font-size:.46rem;color:var(--textlo);
+  margin-top:8px;padding-top:7px;border-top:1px solid var(--border);line-height:1.6;}
 
-/* loading */
-.load-state{padding:70px 16px;text-align:center;
-  color:var(--textlo);font-family:var(--mono);font-size:.72rem;letter-spacing:2px;}
-.spin{display:inline-block;animation:sp 1s linear infinite;margin-right:6px;}
-@keyframes sp{to{transform:rotate(360deg);}}
-.empty{padding:50px;text-align:center;color:var(--textlo);font-size:.75rem;}
-
-/* legend */
 .legend{display:flex;gap:10px;flex-wrap:wrap;padding:10px 14px;
   border-top:1px solid var(--border);background:var(--panel);
-  font-size:.56rem;color:var(--textlo);font-family:var(--mono);}
+  font-size:.52rem;color:var(--textlo);font-family:var(--mono);}
 .leg{display:flex;align-items:center;gap:4px;}
 .ldot2{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
-
-/* notice banner */
-.notice{padding:7px 14px;background:#ffaa0008;border-bottom:1px solid #ffaa0025;
-  font-family:var(--mono);font-size:.58rem;color:var(--watch);line-height:1.5;}
 </style>
 </head>
 <body>
@@ -201,10 +191,10 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 </header>
 
 <div class="tabs">
-  <button class="tab t-all on"  onclick="setTab('all',this)">◈ 全部</button>
-  <button class="tab t-long"    onclick="setTab('long',this)">▲ 做多</button>
-  <button class="tab t-short"   onclick="setTab('short',this)">▼ 做空</button>
-  <button class="tab t-watch"   onclick="setTab('watch',this)">◉ 觀察</button>
+  <button class="tab t-all on" onclick="setTab('all',this)">◈ 全部</button>
+  <button class="tab t-long"   onclick="setTab('long',this)">▲ 做多</button>
+  <button class="tab t-short"  onclick="setTab('short',this)">▼ 做空</button>
+  <button class="tab t-watch"  onclick="setTab('watch',this)">◉ 觀察</button>
 </div>
 
 <div class="scanbar">
@@ -215,7 +205,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
     <option value="4h">4H</option>
     <option value="1d">1D</option>
   </select>
-  <span class="sb-label">幣種數</span>
+  <span class="sb-label">幣種</span>
   <select id="topN">
     <option value="30">前30</option>
     <option value="60">前60</option>
@@ -231,9 +221,9 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   <div class="sc"><div class="sc-val c-long"  id="st0">—</div><div class="sc-lbl">▲ 做多</div></div>
   <div class="sc"><div class="sc-val c-short" id="st1">—</div><div class="sc-lbl">▼ 做空</div></div>
   <div class="sc"><div class="sc-val c-watch" id="st2">—</div><div class="sc-lbl">◉ 觀察</div></div>
-  <div class="sc"><div class="sc-val c-neu"   id="st3">—</div><div class="sc-lbl">OI↑幣種</div></div>
+  <div class="sc"><div class="sc-val c-long"  id="st3">—</div><div class="sc-lbl">EMA雙上</div></div>
   <div class="sc"><div class="sc-val" id="st4" style="color:var(--texthi)">—</div><div class="sc-lbl">掃描總計</div></div>
-  <div class="sc"><div class="sc-val" id="st5" style="color:var(--text);font-size:1rem;">—</div><div class="sc-lbl">平均RSI</div></div>
+  <div class="sc"><div class="sc-val" id="st5" style="color:var(--text);font-size:.95rem;">—</div><div class="sc-lbl">平均RSI</div></div>
 </div>
 
 <div class="errbox" id="errbox"></div>
@@ -241,469 +231,377 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 
 <div class="sortbar">
   <span class="sort-lbl">排序：</span>
-  <button class="sort-btn active" id="sb-score"   onclick="setSortKey('score',this)">評分</button>
-  <button class="sort-btn"        id="sb-rsi"     onclick="setSortKey('rsi',this)">RSI</button>
-  <button class="sort-btn"        id="sb-chg"     onclick="setSortKey('chg',this)">漲跌%</button>
-  <button class="sort-btn"        id="sb-volRatio" onclick="setSortKey('volRatio',this)">量比</button>
-  <button class="sort-btn"        id="sb-funding" onclick="setSortKey('funding',this)">資費率</button>
+  <button class="sort-btn active" onclick="setSortKey('score',this)">評分</button>
+  <button class="sort-btn" onclick="setSortKey('rsi',this)">RSI</button>
+  <button class="sort-btn" onclick="setSortKey('chg',this)">漲跌%</button>
+  <button class="sort-btn" onclick="setSortKey('volRatio',this)">量比</button>
+  <button class="sort-btn" onclick="setSortKey('funding',this)">資費率</button>
+  <button class="sort-btn" onclick="setSortKey('emaScore',this)">EMA強度</button>
 </div>
-
-<div class="notice">💡 點擊任一幣種卡片展開查看進場價格、止損止盈建議</div>
 
 <div class="cardlist" id="cardlist">
   <div class="load-state">按「掃描」載入數據...</div>
 </div>
 
 <div class="legend">
-  <div class="leg"><div class="ldot2" style="background:var(--long)"></div>RSI&lt;35超賣→多</div>
-  <div class="leg"><div class="ldot2" style="background:var(--short)"></div>RSI&gt;65超買→空</div>
-  <div class="leg"><div class="ldot2" style="background:var(--watch)"></div>量比&gt;2x放量</div>
-  <div class="leg"><div class="ldot2" style="background:var(--neu)"></div>評分≥42顯示信號</div>
+  <div class="leg"><div class="ldot2" style="background:var(--long)"></div>價格在EMA99&200上方 = 強多頭</div>
+  <div class="leg"><div class="ldot2" style="background:var(--short)"></div>價格在EMA99&200下方 = 強空頭</div>
+  <div class="leg"><div class="ldot2" style="background:var(--watch)"></div>夾在EMA之間 = 震盪</div>
   <div class="leg">⚠ 僅供參考，非投資建議</div>
 </div>
 
 <script>
-// ══════════════════════════════════════════
-//  CONFIG
-// ══════════════════════════════════════════
-const API   = 'https://fapi.binance.com';
-const BATCH = 6;
+const API='https://fapi.binance.com';
+const BATCH=5;
+let allData=[],curTab='all',sortKey='score',sortDir=-1;
 
-let allData  = [];
-let curTab   = 'all';
-let sortKey  = 'score';
-let sortDir  = -1;
-
-// ══════════════════════════════════════════
-//  MAIN SCAN
-// ══════════════════════════════════════════
-async function startScan() {
-  const btn  = document.getElementById('scanBtn');
-  const tf   = document.getElementById('tfSel').value;
-  const topN = parseInt(document.getElementById('topN').value);
-
-  btn.disabled = true;
-  btn.textContent = '掃描中…';
-  setLive('SCANNING', 'var(--neu)');
-  hideErr(); showLoad(); setProgress(0, '準備中…');
-
-  try {
-    const [tickers, fundingArr] = await Promise.all([
+async function startScan(){
+  const btn=document.getElementById('scanBtn');
+  const tf=document.getElementById('tfSel').value;
+  const topN=parseInt(document.getElementById('topN').value);
+  btn.disabled=true;btn.textContent='掃描中…';
+  setLive('SCANNING','var(--neu)');hideErr();showLoad();setProgress(0,'準備…');
+  try{
+    const [tickers,fundingArr]=await Promise.all([
       fetchJ(`${API}/fapi/v1/ticker/24hr`),
       fetchJ(`${API}/fapi/v1/premiumIndex`)
     ]);
-
-    let usdtT = tickers
-      .filter(t => t.symbol.endsWith('USDT'))
-      .sort((a, b) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume));
-
-    // "全部合約" = all, else slice
-    if (topN < 9999) usdtT = usdtT.slice(0, topN);
-
-    const fundMap = {};
-    fundingArr.forEach(f => { fundMap[f.symbol] = parseFloat(f.lastFundingRate) * 100; });
-
-    const results = [];
-    for (let i = 0; i < usdtT.length; i += BATCH) {
-      const batch   = usdtT.slice(i, i + BATCH);
-      const settled = await Promise.allSettled(batch.map(t => analyzeOne(t, fundMap, tf)));
-      settled.forEach(r => { if (r.status === 'fulfilled' && r.value) results.push(r.value); });
-      const done = Math.min(i + BATCH, usdtT.length);
-      setProgress(done / usdtT.length * 100, `${done}/${usdtT.length}`);
+    let usdtT=tickers.filter(t=>t.symbol.endsWith('USDT'))
+      .sort((a,b)=>parseFloat(b.quoteVolume)-parseFloat(a.quoteVolume));
+    if(topN<9999)usdtT=usdtT.slice(0,topN);
+    const fundMap={};
+    fundingArr.forEach(f=>{fundMap[f.symbol]=parseFloat(f.lastFundingRate)*100;});
+    const results=[];
+    for(let i=0;i<usdtT.length;i+=BATCH){
+      const batch=usdtT.slice(i,i+BATCH);
+      const settled=await Promise.allSettled(batch.map(t=>analyzeOne(t,fundMap,tf)));
+      settled.forEach(r=>{if(r.status==='fulfilled'&&r.value)results.push(r.value);});
+      const done=Math.min(i+BATCH,usdtT.length);
+      setProgress(done/usdtT.length*100,`${done}/${usdtT.length}`);
     }
-
-    allData = results;
-    renderCards();
-    updateStats();
-    updateTicker();
-    document.getElementById('tsLine').textContent = '最後更新：' + new Date().toLocaleString('zh-TW');
-    setLive('LIVE', 'var(--long)');
-
-  } catch (e) {
-    showErr('掃描失敗：' + e.message + '（請確認網路或重試）');
-    setLive('ERROR', 'var(--short)');
-  }
-
-  btn.disabled    = false;
-  btn.textContent = '⟳ 重新掃描';
-  setProgress(100, '完成');
+    allData=results;
+    renderCards();updateStats();updateTicker();
+    document.getElementById('tsLine').textContent='最後更新：'+new Date().toLocaleString('zh-TW');
+    setLive('LIVE','var(--long)');
+  }catch(e){showErr('掃描失敗：'+e.message);setLive('ERROR','var(--short)');}
+  btn.disabled=false;btn.textContent='⟳ 重新掃描';setProgress(100,'完成');
 }
 
-// ══════════════════════════════════════════
-//  ANALYZE ONE SYMBOL
-// ══════════════════════════════════════════
-async function analyzeOne(ticker, fundMap, tf) {
-  const sym   = ticker.symbol;
-  const price = parseFloat(ticker.lastPrice);
-  const chg   = parseFloat(ticker.priceChangePercent);
+async function analyzeOne(ticker,fundMap,tf){
+  const sym=ticker.symbol;
+  const price=parseFloat(ticker.lastPrice);
+  const chg=parseFloat(ticker.priceChangePercent);
 
-  const klines = await fetchJ(`${API}/fapi/v1/klines?symbol=${sym}&interval=${tf}&limit=60`);
-  const closes = klines.map(k => parseFloat(k[4]));
-  const highs  = klines.map(k => parseFloat(k[2]));
-  const lows   = klines.map(k => parseFloat(k[3]));
-  const vols   = klines.map(k => parseFloat(k[5]));
+  // 需要210根計算EMA200
+  const klines=await fetchJ(`${API}/fapi/v1/klines?symbol=${sym}&interval=${tf}&limit=210`);
+  const closes=klines.map(k=>parseFloat(k[4]));
+  const highs=klines.map(k=>parseFloat(k[2]));
+  const lows=klines.map(k=>parseFloat(k[3]));
+  const vols=klines.map(k=>parseFloat(k[5]));
 
-  // ── RSI ──
-  const rsi = calcRSI(closes, 14);
+  const rsi=calcRSI(closes,14);
+  const {hist}=calcMACD(closes,12,26,9);
+  const lastH=hist[hist.length-1],prevH=hist[hist.length-2];
+  let macdSig=0;
+  if(lastH>0&&prevH<=0)macdSig=1;
+  else if(lastH<0&&prevH>=0)macdSig=-1;
+  else if(lastH>0)macdSig=0.5;
+  else if(lastH<0)macdSig=-0.5;
 
-  // ── MACD ──
-  const { hist } = calcMACD(closes, 12, 26, 9);
-  const lastH = hist[hist.length - 1], prevH = hist[hist.length - 2];
-  let macdSig = 0;
-  if (lastH > 0 && prevH <= 0)      macdSig =  1;   // 金叉
-  else if (lastH < 0 && prevH >= 0) macdSig = -1;   // 死叉
-  else if (lastH > 0)               macdSig =  0.5;
-  else if (lastH < 0)               macdSig = -0.5;
+  // EMA 99 & 200
+  const ema99arr=calcEMA(closes,99);
+  const ema200arr=calcEMA(closes,200);
+  const ema99=ema99arr[ema99arr.length-1];
+  const ema200=ema200arr[ema200arr.length-1];
+  const ema99prev=ema99arr[ema99arr.length-2];
+  const ema200prev=ema200arr[ema200arr.length-2];
+  const ema99dir=ema99>ema99prev?'up':'down';
+  const ema200dir=ema200>ema200prev?'up':'down';
+  const aboveEma99=price>ema99;
+  const aboveEma200=price>ema200;
+  const distEma99=((price-ema99)/ema99*100).toFixed(2);
+  const distEma200=((price-ema200)/ema200*100).toFixed(2);
 
-  // ── 關鍵位突破 (20根K線高低點) ──
-  const LB  = 20;
-  const recentHigh = Math.max(...highs.slice(-LB - 1, -1));
-  const recentLow  = Math.min(...lows.slice(-LB - 1, -1));
-  const curClose   = closes[closes.length - 1];
-  const breakout   = curClose > recentHigh ? 1 : curClose < recentLow ? -1 : 0;
+  let emaStatus;
+  if(aboveEma99&&aboveEma200)emaStatus='above_both';
+  else if(!aboveEma99&&!aboveEma200)emaStatus='below_both';
+  else emaStatus='between';
 
-  // 支撐/阻力 = 最近20根的最低/最高
-  const supportLvl    = Math.min(...lows.slice(-LB));
-  const resistanceLvl = Math.max(...highs.slice(-LB));
+  let emaScore=0;
+  if(emaStatus==='above_both'){
+    emaScore=(ema99dir==='up'&&ema200dir==='up')?25:20;
+  }else if(emaStatus==='below_both'){
+    emaScore=(ema99dir==='down'&&ema200dir==='down')?-25:-20;
+  }else{
+    emaScore=aboveEma200?5:-5;
+  }
 
-  // ── 進場/止損/止盈價格 ──
-  // 做多：支撐位回踩進場，止損在支撐下2%，止盈 1:2
-  const longEntry  = +(supportLvl * 1.003).toPrecision(6);
-  const longStop   = +(supportLvl * 0.980).toPrecision(6);
-  const longRisk   = longEntry - longStop;
-  const longTP     = +(longEntry + longRisk * 2).toPrecision(6);
+  // Breakout
+  const LB=20;
+  const recentHigh=Math.max(...highs.slice(-LB-1,-1));
+  const recentLow=Math.min(...lows.slice(-LB-1,-1));
+  const breakout=closes[closes.length-1]>recentHigh?1:closes[closes.length-1]<recentLow?-1:0;
+  const supportLvl=Math.min(...lows.slice(-LB));
+  const resistanceLvl=Math.max(...highs.slice(-LB));
 
-  // 做空：阻力位反彈進場，止損在阻力上2%，止盈 1:2
-  const shortEntry = +(resistanceLvl * 0.997).toPrecision(6);
-  const shortStop  = +(resistanceLvl * 1.020).toPrecision(6);
-  const shortRisk  = shortStop - shortEntry;
-  const shortTP    = +(shortEntry - shortRisk * 2).toPrecision(6);
+  // 進場點位：現價回踩 0.3%
+  const longEntry=+(price*0.997).toPrecision(6);
+  const longStop=+(price*0.980).toPrecision(6);
+  const longTP=+(longEntry+(longEntry-longStop)*2).toPrecision(6);
+  const shortEntry=+(price*1.003).toPrecision(6);
+  const shortStop=+(price*1.020).toPrecision(6);
+  const shortTP=+(shortEntry-(shortStop-shortEntry)*2).toPrecision(6);
 
-  // ── 成交量比 ──
-  const recentVol = avg(vols.slice(-3));
-  const baseVol   = avg(vols.slice(-22, -3));
-  const volRatio  = baseVol > 0 ? recentVol / baseVol : 1;
+  const recentVol=avg(vols.slice(-3));
+  const baseVol=avg(vols.slice(-22,-3));
+  const volRatio=baseVol>0?recentVol/baseVol:1;
+  const funding=fundMap[sym]??0;
+  const oiChg=chg>0?(volRatio>1.3?1:0.3):(volRatio>1.3?-1:-0.3);
+  let smartMoney=0;
+  if(oiChg>0.5&&chg>1&&volRatio>1.5)smartMoney=2;
+  else if(oiChg>0.3&&chg>0)smartMoney=1;
+  else if(oiChg<-0.5&&chg<-1&&volRatio>1.5)smartMoney=-2;
+  else if(oiChg<-0.3&&chg<0)smartMoney=-1;
 
-  // ── 資金費率 ──
-  const funding = fundMap[sym] ?? 0;
+  // SCORING
+  let ls=0,ss=0;
+  // RSI 25
+  if(rsi<25)ls+=25;else if(rsi<35)ls+=18;else if(rsi<45)ls+=8;
+  if(rsi>75)ss+=25;else if(rsi>65)ss+=18;else if(rsi>55)ss+=8;
+  // MACD 20
+  if(macdSig>=1)ls+=20;else if(macdSig>=0.5)ls+=8;
+  if(macdSig<=-1)ss+=20;else if(macdSig<=-0.5)ss+=8;
+  // EMA 25
+  if(emaScore>=25)ls+=25;else if(emaScore>=20)ls+=20;else if(emaScore>0)ls+=8;
+  if(emaScore<=-25)ss+=25;else if(emaScore<=-20)ss+=20;else if(emaScore<0)ss+=8;
+  // Breakout 10
+  if(breakout===1)ls+=10;
+  if(breakout===-1)ss+=10;
+  // Volume 8
+  if(volRatio>3){ls+=8;ss+=8;}else if(volRatio>2){ls+=5;ss+=5;}else if(volRatio>1.5){ls+=3;ss+=3;}
+  // Funding 12
+  if(funding<-0.08)ls+=12;else if(funding<-0.03)ls+=6;
+  if(funding>0.08)ss+=12;else if(funding>0.03)ss+=6;
+  // Smart money 12
+  if(smartMoney===2)ls+=12;else if(smartMoney===1)ls+=6;
+  if(smartMoney===-2)ss+=12;else if(smartMoney===-1)ss+=6;
 
-  // ── OI 方向 (用價格+量比近似) ──
-  const oiChg = chg > 0 ? (volRatio > 1.3 ? 1 : 0.3) : (volRatio > 1.3 ? -1 : -0.3);
+  const THRESH=42;
+  let signal='none';
+  if(ls>=THRESH&&ls>ss)signal='long';
+  else if(ss>=THRESH&&ss>ls)signal='short';
+  else if(ls>=28||ss>=28)signal='watch';
+  const score=signal==='long'?ls:signal==='short'?ss:Math.max(ls,ss);
 
-  // ── 聰明錢 ──
-  let smartMoney = 0;
-  if      (oiChg > 0.5  && chg >  1 && volRatio > 1.5) smartMoney =  2;
-  else if (oiChg > 0.3  && chg >  0)                   smartMoney =  1;
-  else if (oiChg < -0.5 && chg < -1 && volRatio > 1.5) smartMoney = -2;
-  else if (oiChg < -0.3 && chg <  0)                   smartMoney = -1;
-
-  // ══ 綜合評分 (滿分 100) ══
-  let ls = 0, ss = 0;
-
-  // RSI 25分
-  if (rsi < 25)      ls += 25; else if (rsi < 35) ls += 18; else if (rsi < 45) ls += 8;
-  if (rsi > 75)      ss += 25; else if (rsi > 65) ss += 18; else if (rsi > 55) ss += 8;
-
-  // MACD 20分
-  if (macdSig >= 1)        ls += 20; else if (macdSig >= 0.5) ls += 8;
-  if (macdSig <= -1)       ss += 20; else if (macdSig <= -0.5) ss += 8;
-
-  // 突破 15分
-  if (breakout ===  1) ls += 15;
-  if (breakout === -1) ss += 15;
-
-  // 成交量 10分
-  if      (volRatio > 3)   { ls += 10; ss += 10; }
-  else if (volRatio > 2)   { ls +=  7; ss +=  7; }
-  else if (volRatio > 1.5) { ls +=  4; ss +=  4; }
-
-  // 資金費率 15分
-  if (funding < -0.08) ls += 15; else if (funding < -0.03) ls += 8;
-  if (funding >  0.08) ss += 15; else if (funding >  0.03) ss += 8;
-
-  // 聰明錢 15分
-  if      (smartMoney ===  2) ls += 15; else if (smartMoney ===  1) ls += 7;
-  if      (smartMoney === -2) ss += 15; else if (smartMoney === -1) ss += 7;
-
-  // 判斷信號
-  const THRESH = 42;
-  let signal = 'none';
-  if      (ls >= THRESH && ls > ss) signal = 'long';
-  else if (ss >= THRESH && ss > ls) signal = 'short';
-  else if (ls >= 28 || ss >= 28)    signal = 'watch';
-
-  const score = signal === 'long' ? ls : signal === 'short' ? ss : Math.max(ls, ss);
-
-  return {
-    symbol: sym.replace('USDT', ''), rawSym: sym,
-    price, chg, rsi, macdSig, breakout, volRatio, funding,
-    oiChg, smartMoney, ls, ss, score, signal,
-    longEntry, longStop, longTP,
-    shortEntry, shortStop, shortTP,
-    supportLvl, resistanceLvl
+  return{
+    symbol:sym.replace('USDT',''),rawSym:sym,
+    price,chg,rsi,macdSig,breakout,volRatio,funding,
+    oiChg,smartMoney,ls,ss,score,signal,emaScore,
+    ema99,ema200,ema99dir,ema200dir,
+    aboveEma99,aboveEma200,emaStatus,
+    distEma99,distEma200,
+    longEntry,longStop,longTP,
+    shortEntry,shortStop,shortTP,
+    supportLvl,resistanceLvl
   };
 }
 
-// ══════════════════════════════════════════
-//  INDICATORS
-// ══════════════════════════════════════════
-function calcRSI(closes, p = 14) {
-  if (closes.length < p + 1) return 50;
-  let g = 0, l = 0;
-  for (let i = 1; i <= p; i++) {
-    const d = closes[i] - closes[i - 1];
-    if (d > 0) g += d; else l += Math.abs(d);
-  }
-  let ag = g / p, al = l / p;
-  for (let i = p + 1; i < closes.length; i++) {
-    const d = closes[i] - closes[i - 1];
-    ag = (ag * (p - 1) + Math.max(d, 0)) / p;
-    al = (al * (p - 1) + Math.max(-d, 0)) / p;
-  }
-  return al === 0 ? 100 : 100 - 100 / (1 + ag / al);
-}
-
-function ema(arr, p) {
-  const k = 2 / (p + 1); let e = arr[0]; const out = [e];
-  for (let i = 1; i < arr.length; i++) { e = arr[i] * k + e * (1 - k); out.push(e); }
+function calcEMA(closes,p){
+  const k=2/(p+1);let e=closes[0];const out=[e];
+  for(let i=1;i<closes.length;i++){e=closes[i]*k+e*(1-k);out.push(e);}
   return out;
 }
-
-function calcMACD(closes, fast = 12, slow = 26, sig = 9) {
-  const ef = ema(closes, fast), es = ema(closes, slow);
-  const ml = ef.map((v, i) => v - es[i]);
-  const sl = ema(ml.slice(slow - 1), sig);
-  const hist = sl.map((v, i) => ml[slow - 1 + i] - v);
-  return { hist };
+function calcRSI(closes,p=14){
+  if(closes.length<p+1)return 50;
+  let g=0,l=0;
+  for(let i=1;i<=p;i++){const d=closes[i]-closes[i-1];if(d>0)g+=d;else l+=Math.abs(d);}
+  let ag=g/p,al=l/p;
+  for(let i=p+1;i<closes.length;i++){
+    const d=closes[i]-closes[i-1];
+    ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p;
+  }
+  return al===0?100:100-100/(1+ag/al);
 }
-
-function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
-
-function fmtP(p) {
-  if (isNaN(p) || p === null) return '—';
-  if (p >= 10000) return p.toLocaleString('en', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  if (p >= 1000)  return p.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  if (p >= 1)     return p.toFixed(4);
-  if (p >= 0.001) return p.toFixed(5);
+function calcMACD(closes,fast=12,slow=26,sig=9){
+  const ef=calcEMA(closes,fast),es=calcEMA(closes,slow);
+  const ml=ef.map((v,i)=>v-es[i]);
+  const sl=calcEMA(ml.slice(slow-1),sig);
+  return{hist:sl.map((v,i)=>ml[slow-1+i]-v)};
+}
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;}
+function fmtP(p){
+  if(isNaN(p)||p===null)return'—';
+  if(p>=10000)return p.toLocaleString('en',{minimumFractionDigits:1,maximumFractionDigits:1});
+  if(p>=1000)return p.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(p>=1)return p.toFixed(4);
+  if(p>=0.001)return p.toFixed(5);
   return p.toFixed(7);
 }
 
-// ══════════════════════════════════════════
-//  RENDER CARDS
-// ══════════════════════════════════════════
-function renderCards() {
-  let data = [...allData];
-  if (curTab !== 'all') data = data.filter(d => d.signal === curTab);
+function renderCards(){
+  let data=[...allData];
+  if(curTab!=='all')data=data.filter(d=>d.signal===curTab);
+  data.sort((a,b)=>sortDir*(a[sortKey]-b[sortKey]));
+  const list=document.getElementById('cardlist');
+  if(!data.length){list.innerHTML='<div class="empty">無符合條件的幣種</div>';return;}
 
-  // sort
-  data.sort((a, b) => {
-    const va = a[sortKey], vb = b[sortKey];
-    // RSI: ascending for long (lower is better), so handle separately
-    if (sortKey === 'rsi') return sortDir * (va - vb);
-    return sortDir * (va - vb);
-  });
+  list.innerHTML=data.map((d,idx)=>{
+    const rowCls=d.signal==='long'?'row-long':d.signal==='short'?'row-short':d.signal==='watch'?'row-watch':'';
+    const chgStr=(d.chg>=0?'+':'')+d.chg.toFixed(2)+'%';
+    const chgCls=d.chg>=0?'pos':'neg';
+    let sigStr,sigCls;
+    if(d.signal==='long'){sigStr='▲ 做多';sigCls='sig-long';}
+    else if(d.signal==='short'){sigStr='▼ 做空';sigCls='sig-short';}
+    else if(d.signal==='watch'){sigStr='◉ 觀察';sigCls='sig-watch';}
+    else{sigStr='—';sigCls='sig-none';}
 
-  const list = document.getElementById('cardlist');
-  if (!data.length) {
-    list.innerHTML = '<div class="empty">目前無符合條件的幣種</div>';
-    return;
-  }
-
-  list.innerHTML = data.map((d, idx) => {
-    const rowCls  = d.signal === 'long' ? 'row-long' : d.signal === 'short' ? 'row-short' : d.signal === 'watch' ? 'row-watch' : '';
-    const chgCls  = d.chg >= 0 ? 'pos' : 'neg';
-    const chgStr  = (d.chg >= 0 ? '+' : '') + d.chg.toFixed(2) + '%';
-
-    // Signal badge
-    let sigStr, sigCls;
-    if      (d.signal === 'long')  { sigStr = '▲ 做多'; sigCls = 'sig-long';  }
-    else if (d.signal === 'short') { sigStr = '▼ 做空'; sigCls = 'sig-short'; }
-    else if (d.signal === 'watch') { sigStr = '◉ 觀察'; sigCls = 'sig-watch'; }
-    else                           { sigStr = '—';      sigCls = 'sig-none';  }
-
-    // Score gauge
-    const gfCls = d.signal === 'short' ? 'gfill-short' : d.signal === 'watch' ? 'gfill-watch' : 'gfill-long';
+    // EMA pills
+    const p99cls=d.aboveEma99?'ep-above':'ep-below';
+    const p200cls=d.aboveEma200?'ep-above':'ep-below';
+    const p99str=(d.aboveEma99?'↑':'↓')+'EMA99';
+    const p200str=(d.aboveEma200?'↑':'↓')+'EMA200';
+    const d99sign=parseFloat(d.distEma99)>=0?'+':'';
+    const d200sign=parseFloat(d.distEma200)>=0?'+':'';
 
     // Chips
-    const rsiCls  = d.rsi < 35 ? 'chip-long' : d.rsi > 65 ? 'chip-short' : d.rsi < 48 || d.rsi > 52 ? 'chip-watch' : 'chip-neu';
-    let macdStr, macdCls;
-    if      (d.macdSig >=  1) { macdStr = 'MACD金叉'; macdCls = 'chip-long'; }
-    else if (d.macdSig <= -1) { macdStr = 'MACD死叉'; macdCls = 'chip-short'; }
-    else if (d.macdSig >   0) { macdStr = 'MACD多';   macdCls = 'chip-long'; }
-    else if (d.macdSig <   0) { macdStr = 'MACD空';   macdCls = 'chip-short'; }
-    else                      { macdStr = 'MACD中性';  macdCls = 'chip-neu'; }
+    const rsiCls=d.rsi<35?'chip-long':d.rsi>65?'chip-short':d.rsi<48||d.rsi>52?'chip-watch':'chip-neu';
+    let macdStr,macdCls;
+    if(d.macdSig>=1){macdStr='MACD金叉';macdCls='chip-long';}
+    else if(d.macdSig<=-1){macdStr='MACD死叉';macdCls='chip-short';}
+    else if(d.macdSig>0){macdStr='MACD多';macdCls='chip-long';}
+    else if(d.macdSig<0){macdStr='MACD空';macdCls='chip-short';}
+    else{macdStr='MACD中性';macdCls='chip-neu';}
+    const boCls=d.breakout===1?'chip-long':d.breakout===-1?'chip-short':'chip-neu';
+    const boStr=d.breakout===1?'突破▲':d.breakout===-1?'跌破▼':'區間';
+    const volCls=d.volRatio>2?'chip-long':d.volRatio>1.5?'chip-watch':'chip-neu';
+    const fundCls=d.funding<-0.03?'chip-long':d.funding>0.03?'chip-short':'chip-neu';
+    let smStr,smCls;
+    if(d.smartMoney===2){smStr='聰明錢↑↑';smCls='chip-long';}
+    else if(d.smartMoney===1){smStr='聰明錢↑';smCls='chip-long';}
+    else if(d.smartMoney===-2){smStr='聰明錢↓↓';smCls='chip-short';}
+    else if(d.smartMoney===-1){smStr='聰明錢↓';smCls='chip-short';}
+    else{smStr='聰明錢中性';smCls='chip-neu';}
+    const gfCls=d.signal==='short'?'gfill-short':d.signal==='watch'?'gfill-watch':'gfill-long';
 
-    let boStr, boCls;
-    if      (d.breakout ===  1) { boStr = '突破阻力▲'; boCls = 'chip-long'; }
-    else if (d.breakout === -1) { boStr = '跌破支撐▼'; boCls = 'chip-short'; }
-    else                        { boStr = '區間內';     boCls = 'chip-neu'; }
+    // EMA detail
+    const ema99vcls=d.aboveEma99?'ev-long':'ev-short';
+    const ema200vcls=d.aboveEma200?'ev-long':'ev-short';
+    const ema99dircol=d.ema99dir==='up'?'var(--long)':'var(--short)';
+    const ema200dircol=d.ema200dir==='up'?'var(--long)':'var(--short)';
 
-    const volCls  = d.volRatio > 2 ? 'chip-long' : d.volRatio > 1.5 ? 'chip-watch' : 'chip-neu';
-    const fundCls = d.funding < -0.03 ? 'chip-long' : d.funding > 0.03 ? 'chip-short' : 'chip-neu';
-
-    let smStr, smCls;
-    if      (d.smartMoney ===  2) { smStr = '聰明錢↑↑'; smCls = 'chip-long'; }
-    else if (d.smartMoney ===  1) { smStr = '聰明錢↑';   smCls = 'chip-long'; }
-    else if (d.smartMoney === -2) { smStr = '聰明錢↓↓'; smCls = 'chip-short'; }
-    else if (d.smartMoney === -1) { smStr = '聰明錢↓';   smCls = 'chip-short'; }
-    else                          { smStr = '聰明錢中性'; smCls = 'chip-neu'; }
-
-    const oiStr = d.oiChg > 0.5 ? '↑↑增倉' : d.oiChg > 0 ? '↑微增' : d.oiChg < -0.5 ? '↓↓減倉' : '↓微減';
-    const oiCls = d.oiChg > 0.3 ? 'chip-long' : d.oiChg < -0.3 ? 'chip-short' : 'chip-neu';
-
-    // 做多進場建議說明
-    const longPct  = (((d.longEntry - d.longStop) / d.longEntry) * 100).toFixed(2);
-    const shortPct = (((d.shortStop - d.shortEntry) / d.shortEntry) * 100).toFixed(2);
-
-    return `<div class="coin-card ${rowCls}" onclick="toggleCard(this)" style="animation-delay:${idx*10}ms">
+    return`<div class="coin-card ${rowCls}" onclick="toggleCard(this)" style="animation-delay:${idx*7}ms">
       <div class="card-top">
         <span class="card-sym">${d.symbol}<sub>/USDT</sub></span>
         <span class="card-price">${fmtP(d.price)}</span>
         <span class="card-chg ${chgCls}">${chgStr}</span>
         <span class="sig ${sigCls}">${sigStr}</span>
       </div>
+      <div class="ema-row">
+        <span class="ema-pill ${p99cls}">${p99str}</span>
+        <span class="ema-pill ${p200cls}">${p200str}</span>
+        <span class="ema-dist">距EMA99: ${d99sign}${d.distEma99}% | EMA200: ${d200sign}${d.distEma200}%</span>
+      </div>
       <div class="score-row">
         <div class="gbar"><div class="gfill ${gfCls}" style="width:${Math.min(d.score,100)}%"></div></div>
-        <span class="gnum">評分 ${d.score}/100 | 多${d.ls} 空${d.ss}</span>
+        <span class="gnum">評分 ${d.score} | 多${d.ls} 空${d.ss}</span>
       </div>
       <div class="chips">
         <span class="chip ${rsiCls}">RSI ${d.rsi.toFixed(1)}</span>
         <span class="chip ${macdCls}">${macdStr}</span>
         <span class="chip ${boCls}">${boStr}</span>
         <span class="chip ${volCls}">量比 ${d.volRatio.toFixed(1)}x</span>
-        <span class="chip ${fundCls}">費率 ${(d.funding >= 0 ? '+' : '') + d.funding.toFixed(4)}%</span>
+        <span class="chip ${fundCls}">費率 ${(d.funding>=0?'+':'')+d.funding.toFixed(4)}%</span>
         <span class="chip ${smCls}">${smStr}</span>
-        <span class="chip ${oiCls}">OI ${oiStr}</span>
       </div>
-
       <div class="card-detail">
-        <div class="detail-title">▸ 參考進場價格（基於K線支撐/阻力）</div>
+        <div class="dtitle">▸ EMA 趨勢詳情</div>
+        <div class="ema-detail">
+          <div class="edb">
+            <div class="edb-lbl">現價</div>
+            <div class="edb-val ev-neu">${fmtP(d.price)}</div>
+            <div class="edb-sub" style="color:var(--textlo)">基準</div>
+          </div>
+          <div class="edb">
+            <div class="edb-lbl">EMA 99</div>
+            <div class="edb-val ${ema99vcls}">${fmtP(d.ema99)}</div>
+            <div class="edb-sub" style="color:${ema99dircol}">${d.ema99dir==='up'?'↑ 向上':'↓ 向下'} | 價格${d.aboveEma99?'上方':'下方'}</div>
+          </div>
+          <div class="edb">
+            <div class="edb-lbl">EMA 200</div>
+            <div class="edb-val ${ema200vcls}">${fmtP(d.ema200)}</div>
+            <div class="edb-sub" style="color:${ema200dircol}">${d.ema200dir==='up'?'↑ 向上':'↓ 向下'} | 價格${d.aboveEma200?'上方':'下方'}</div>
+          </div>
+        </div>
+        <div class="dtitle">▸ 進場點位（現價回踩 0.3%）</div>
         <div class="entry-grid">
-          <div class="entry-box entry-long">
-            <div class="entry-label">做多進場</div>
-            <div class="entry-price entry-price-long">${fmtP(d.longEntry)}</div>
-            <div class="entry-sub">支撐位回踩 +0.3%</div>
+          <div class="ebox ebox-l">
+            <div class="elbl">做多進場</div>
+            <div class="eprice ep-l">${fmtP(d.longEntry)}</div>
+            <div class="esub">現價 −0.3%</div>
           </div>
-          <div class="entry-box entry-short">
-            <div class="entry-label">做空進場</div>
-            <div class="entry-price entry-price-short">${fmtP(d.shortEntry)}</div>
-            <div class="entry-sub">阻力位反彈 -0.3%</div>
+          <div class="ebox ebox-s">
+            <div class="elbl">做空進場</div>
+            <div class="eprice ep-s">${fmtP(d.shortEntry)}</div>
+            <div class="esub">現價 +0.3%</div>
           </div>
         </div>
-
-        <div class="detail-title">▸ 風險管理（1:2 盈虧比）</div>
+        <div class="dtitle">▸ 止損 / 止盈（1:2 盈虧比）</div>
         <div class="risk-grid">
-          <div class="risk-item">
-            <div class="risk-key">做多止損 (SL)</div>
-            <div class="risk-val rv-short">${fmtP(d.longStop)}</div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-key">做多止盈 (TP)</div>
-            <div class="risk-val rv-long">${fmtP(d.longTP)}</div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-key">做空止損 (SL)</div>
-            <div class="risk-val rv-short">${fmtP(d.shortStop)}</div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-key">做空止盈 (TP)</div>
-            <div class="risk-val rv-long">${fmtP(d.shortTP)}</div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-key">支撐位</div>
-            <div class="risk-val rv-neu">${fmtP(d.supportLvl)}</div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-key">阻力位</div>
-            <div class="risk-val rv-neu">${fmtP(d.resistanceLvl)}</div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-key">多單風險幅度</div>
-            <div class="risk-val rv-neu">${longPct}%</div>
-          </div>
-          <div class="risk-item">
-            <div class="risk-key">空單風險幅度</div>
-            <div class="risk-val rv-neu">${shortPct}%</div>
-          </div>
+          <div class="ritem"><div class="rkey">做多止損 SL</div><div class="rval rv-s">${fmtP(d.longStop)}</div></div>
+          <div class="ritem"><div class="rkey">做多止盈 TP</div><div class="rval rv-l">${fmtP(d.longTP)}</div></div>
+          <div class="ritem"><div class="rkey">做空止損 SL</div><div class="rval rv-s">${fmtP(d.shortStop)}</div></div>
+          <div class="ritem"><div class="rkey">做空止盈 TP</div><div class="rval rv-l">${fmtP(d.shortTP)}</div></div>
+          <div class="ritem"><div class="rkey">支撐位</div><div class="rval rv-n">${fmtP(d.supportLvl)}</div></div>
+          <div class="ritem"><div class="rkey">阻力位</div><div class="rval rv-n">${fmtP(d.resistanceLvl)}</div></div>
         </div>
-
-        <div class="disclaimer">
-          ⚠ 進場價格由系統根據近期K線高低點自動計算，僅供參考。<br>
-          市場瞬息萬變，請結合自身判斷及風險管理，此工具不構成任何投資建議。
-        </div>
+        <div class="disc">⚠ 進場點位為現價±0.3%，EMA由幣安K線即時計算。此工具僅供參考，不構成投資建議，請自行評估風險。</div>
       </div>
     </div>`;
   }).join('');
 }
 
-function toggleCard(el) { el.classList.toggle('expanded'); }
+function toggleCard(el){el.classList.toggle('expanded');}
 
-// ══════════════════════════════════════════
-//  STATS + TICKER
-// ══════════════════════════════════════════
-function updateStats() {
-  document.getElementById('st0').textContent = allData.filter(d => d.signal === 'long').length;
-  document.getElementById('st1').textContent = allData.filter(d => d.signal === 'short').length;
-  document.getElementById('st2').textContent = allData.filter(d => d.signal === 'watch').length;
-  document.getElementById('st3').textContent = allData.filter(d => d.oiChg > 0.5).length;
-  document.getElementById('st4').textContent = allData.length;
-  document.getElementById('st5').textContent = avg(allData.map(d => d.rsi)).toFixed(1);
+function updateStats(){
+  document.getElementById('st0').textContent=allData.filter(d=>d.signal==='long').length;
+  document.getElementById('st1').textContent=allData.filter(d=>d.signal==='short').length;
+  document.getElementById('st2').textContent=allData.filter(d=>d.signal==='watch').length;
+  document.getElementById('st3').textContent=allData.filter(d=>d.emaStatus==='above_both').length;
+  document.getElementById('st4').textContent=allData.length;
+  document.getElementById('st5').textContent=avg(allData.map(d=>d.rsi)).toFixed(1);
 }
 
-function updateTicker() {
-  const top = [...allData].sort((a, b) => b.score - a.score).slice(0, 8);
-  document.getElementById('tickerScroll').textContent =
-    top.map(d => `${d.symbol} ${d.chg >= 0 ? '▲' : '▼'}${Math.abs(d.chg).toFixed(1)}%`).join('  ·  ');
+function updateTicker(){
+  const top=[...allData].sort((a,b)=>b.score-a.score).slice(0,8);
+  document.getElementById('tickerScroll').textContent=
+    top.map(d=>`${d.symbol} ${d.chg>=0?'▲':'▼'}${Math.abs(d.chg).toFixed(1)}%`).join('  ·  ');
 }
 
-// ══════════════════════════════════════════
-//  UI CONTROLS
-// ══════════════════════════════════════════
-function setTab(t, el) {
-  curTab = t;
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  renderCards();
+function setTab(t,el){
+  curTab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');renderCards();
 }
-
-let currentSortEl = document.getElementById('sb-score');
-function setSortKey(key, el) {
-  if (sortKey === key) { sortDir *= -1; }
-  else { sortKey = key; sortDir = key === 'rsi' ? 1 : -1; }
-  if (currentSortEl) currentSortEl.classList.remove('active');
-  el.classList.add('active');
-  currentSortEl = el;
-  renderCards();
+function setSortKey(key,el){
+  if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=-1;}
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');renderCards();
 }
-
-function setLive(txt, color) {
-  document.getElementById('liveTxt').textContent = txt;
-  const d = document.getElementById('liveDot');
-  d.style.background = color; d.style.boxShadow = `0 0 8px ${color}`;
+function setLive(txt,color){
+  document.getElementById('liveTxt').textContent=txt;
+  const d=document.getElementById('liveDot');
+  d.style.background=color;d.style.boxShadow=`0 0 8px ${color}`;
 }
-
-function setProgress(pct, txt) {
-  document.getElementById('progFill').style.width = pct + '%';
-  document.getElementById('progTxt').textContent = txt;
+function setProgress(pct,txt){
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=txt;
 }
-
-function showLoad() {
-  document.getElementById('cardlist').innerHTML =
-    '<div class="load-state"><span class="spin">◌</span>掃描中，請稍候…</div>';
+function showLoad(){
+  document.getElementById('cardlist').innerHTML='<div class="load-state"><span class="spin">◌</span>掃描中，請稍候…</div>';
 }
-
-function showErr(msg) {
-  const b = document.getElementById('errbox');
-  b.style.display = 'block'; b.textContent = msg;
-}
-
-function hideErr() { document.getElementById('errbox').style.display = 'none'; }
-
-async function fetchJ(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
-}
+function showErr(msg){const b=document.getElementById('errbox');b.style.display='block';b.textContent=msg;}
+function hideErr(){document.getElementById('errbox').style.display='none';}
+async function fetchJ(url){const r=await fetch(url);if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
 </script>
 </body>
 </html>
