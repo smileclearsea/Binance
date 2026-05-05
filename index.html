@@ -80,6 +80,18 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   color:var(--textlo);cursor:pointer;}
 .sort-btn.active{border-color:var(--neu);color:var(--neu);}
 
+.emabar{display:flex;gap:6px;flex-wrap:wrap;padding:7px 14px;
+  background:var(--bg);border-bottom:1px solid var(--border);align-items:center;}
+.ema-flbl{font-family:var(--mono);font-size:.53rem;color:var(--textlo);}
+.ema-fbtn{font-family:var(--mono);font-size:.53rem;padding:3px 10px;
+  border-radius:10px;border:1px solid var(--border);background:transparent;
+  color:var(--textlo);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.ema-fbtn:active{opacity:.7;}
+.ema-fbtn.ef-all   {border-color:var(--neu);color:var(--neu);background:#3a7fff18;}
+.ema-fbtn.ef-above {border-color:var(--long);color:var(--long);background:#00f0a015;}
+.ema-fbtn.ef-below {border-color:var(--short);color:var(--short);background:#ff335515;}
+.ema-fbtn.ef-between{border-color:var(--watch);color:var(--watch);background:#ffaa0015;}
+
 .cardlist{padding:0 0 60px;}
 .load-state{padding:70px;text-align:center;color:var(--textlo);
   font-family:var(--mono);font-size:.7rem;letter-spacing:2px;}
@@ -239,6 +251,18 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   <button class="sort-btn" onclick="setSortKey('emaScore',this)">EMA強度</button>
 </div>
 
+<div class="emabar">
+  <span class="ema-flbl">EMA篩選：</span>
+  <button class="ema-fbtn ef-all"     onclick="setEmaFilter('all',this)">全部</button>
+  <button class="ema-fbtn"            onclick="setEmaFilter('above_both',this)">↑ EMA99&200上方</button>
+  <button class="ema-fbtn"            onclick="setEmaFilter('below_both',this)">↓ EMA99&200下方</button>
+  <button class="ema-fbtn"            onclick="setEmaFilter('above99',this)">↑ EMA99上方</button>
+  <button class="ema-fbtn"            onclick="setEmaFilter('below99',this)">↓ EMA99下方</button>
+  <button class="ema-fbtn"            onclick="setEmaFilter('above200',this)">↑ EMA200上方</button>
+  <button class="ema-fbtn"            onclick="setEmaFilter('below200',this)">↓ EMA200下方</button>
+  <button class="ema-fbtn"            onclick="setEmaFilter('between',this)">⇔ 夾在之間</button>
+</div>
+
 <div class="cardlist" id="cardlist">
   <div class="load-state">按「掃描」載入數據...</div>
 </div>
@@ -253,7 +277,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 <script>
 const API='https://fapi.binance.com';
 const BATCH=5;
-let allData=[],curTab='all',sortKey='score',sortDir=-1;
+let allData=[],curTab='all',sortKey='score',sortDir=-1,emaFilter='all';
 
 async function startScan(){
   const btn=document.getElementById('scanBtn');
@@ -441,6 +465,14 @@ function fmtP(p){
 function renderCards(){
   let data=[...allData];
   if(curTab!=='all')data=data.filter(d=>d.signal===curTab);
+  // EMA filter
+  if(emaFilter==='above_both') data=data.filter(d=>d.emaStatus==='above_both');
+  else if(emaFilter==='below_both') data=data.filter(d=>d.emaStatus==='below_both');
+  else if(emaFilter==='above99')  data=data.filter(d=>d.aboveEma99);
+  else if(emaFilter==='below99')  data=data.filter(d=>!d.aboveEma99);
+  else if(emaFilter==='above200') data=data.filter(d=>d.aboveEma200);
+  else if(emaFilter==='below200') data=data.filter(d=>!d.aboveEma200);
+  else if(emaFilter==='between')  data=data.filter(d=>d.emaStatus==='between');
   data.sort((a,b)=>sortDir*(a[sortKey]-b[sortKey]));
   const list=document.getElementById('cardlist');
   if(!data.length){list.innerHTML='<div class="empty">無符合條件的幣種</div>';return;}
@@ -577,6 +609,17 @@ function updateTicker(){
     top.map(d=>`${d.symbol} ${d.chg>=0?'▲':'▼'}${Math.abs(d.chg).toFixed(1)}%`).join('  ·  ');
 }
 
+function setEmaFilter(f,el){
+  emaFilter=f;
+  document.querySelectorAll('.ema-fbtn').forEach(b=>{
+    b.className='ema-fbtn';
+    if(f==='above_both'||f==='above99'||f==='above200') b===el&&b.classList.add('ef-above');
+    else if(f==='below_both'||f==='below99'||f==='below200') b===el&&b.classList.add('ef-below');
+    else if(f==='between') b===el&&b.classList.add('ef-between');
+    else if(f==='all') b===el&&b.classList.add('ef-all');
+  });
+  renderCards();
+}
 function setTab(t,el){
   curTab=t;
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
