@@ -79,6 +79,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   border-radius:2px;border:1px solid var(--border);background:transparent;
   color:var(--textlo);cursor:pointer;}
 .sort-btn.active{border-color:var(--neu);color:var(--neu);}
+.sort-dir-lbl{font-family:var(--mono);font-size:.53rem;color:var(--neu);margin-left:4px;white-space:nowrap;}
 
 .emabar{display:flex;gap:6px;flex-wrap:wrap;padding:7px 14px;
   background:var(--bg);border-bottom:1px solid var(--border);align-items:center;}
@@ -254,6 +255,9 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   <button class="sort-btn" onclick="setSortKey('volRatio',this)">量比</button>
   <button class="sort-btn" onclick="setSortKey('funding',this)">資費率</button>
   <button class="sort-btn" onclick="setSortKey('emaScore',this)">EMA強度</button>
+  <button class="sort-btn" onclick="setSortKey('distEma99num',this)">EMA99距離%</button>
+  <button class="sort-btn" onclick="setSortKey('distEma200num',this)">EMA200距離%</button>
+  <span class="sort-dir-lbl" id="sortDirLabel">↓ 降序</span>
 </div>
 
 <div class="emabar">
@@ -321,8 +325,8 @@ async function analyzeOne(ticker,fundMap,tf){
   const price=parseFloat(ticker.lastPrice);
   const chg=parseFloat(ticker.priceChangePercent);
 
-  // 需要210根計算EMA200
-  const klines=await fetchJ(`${API}/fapi/v1/klines?symbol=${sym}&interval=${tf}&limit=210`);
+  // 需要300根讓EMA200有足夠暖機（至少200根才開始計算有意義）
+  const klines=await fetchJ(`${API}/fapi/v1/klines?symbol=${sym}&interval=${tf}&limit=300`);
   const closes=klines.map(k=>parseFloat(k[4]));
   const highs=klines.map(k=>parseFloat(k[2]));
   const lows=klines.map(k=>parseFloat(k[3]));
@@ -429,6 +433,8 @@ async function analyzeOne(ticker,fundMap,tf){
     ema99,ema200,ema99dir,ema200dir,
     aboveEma99,aboveEma200,emaStatus,
     distEma99,distEma200,
+    distEma99num:parseFloat(distEma99),
+    distEma200num:parseFloat(distEma200),
     longEntry,longStop,longTP,
     shortEntry,shortStop,shortTP,
     supportLvl,resistanceLvl
@@ -436,8 +442,12 @@ async function analyzeOne(ticker,fundMap,tf){
 }
 
 function calcEMA(closes,p){
-  const k=2/(p+1);let e=closes[0];const out=[e];
-  for(let i=1;i<closes.length;i++){e=closes[i]*k+e*(1-k);out.push(e);}
+  const k=2/(p+1);
+  // 用前p根的SMA當種子，讓EMA更準確（尤其EMA200）
+  const seed=closes.slice(0,p).reduce((a,b)=>a+b,0)/Math.min(p,closes.length);
+  let e=seed;
+  const out=[];
+  for(let i=0;i<closes.length;i++){e=closes[i]*k+e*(1-k);out.push(e);}
   return out;
 }
 function calcRSI(closes,p=14){
@@ -636,7 +646,10 @@ function setTab(t,el){
 function setSortKey(key,el){
   if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=-1;}
   document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');renderCards();
+  el.classList.add('active');
+  const lbl=document.getElementById('sortDirLabel');
+  if(lbl)lbl.textContent=sortDir===-1?'↓ 降序':'↑ 升序';
+  renderCards();
 }
 function setLive(txt,color){
   document.getElementById('liveTxt').textContent=txt;
