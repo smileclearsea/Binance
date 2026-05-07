@@ -7,23 +7,23 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600;700&family=IBM+Plex+Sans+TC:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#05080f;--bg2:#080d18;--panel:#0a1020;
-  --border:#131d30;--bdr2:#1c2a42;
-  --long:#00f0a0;--short:#ff3355;--watch:#ffaa00;--neu:#3a7fff;
-  --text:#8aaac8;--texthi:#d0e8ff;--textlo:#2a4060;
+  --bg:#f0f4f8;--bg2:#e8edf3;--panel:#dde4ed;
+  --border:#c8d3df;--bdr2:#b0bfcf;
+  --long:#007a52;--short:#cc1133;--watch:#b86b00;--neu:#1a5fc8;
+  --text:#2a3a4a;--texthi:#0a1520;--textlo:#7a90a8;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans TC',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;
   background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:48px 48px;opacity:.2;pointer-events:none;z-index:0;}
+  background-size:48px 48px;opacity:.35;pointer-events:none;z-index:0;}
 
-header{position:sticky;top:0;z-index:200;background:#05080fee;
+header{position:sticky;top:0;z-index:200;background:#f0f4f8ee;
   backdrop-filter:blur(14px);border-bottom:1px solid var(--bdr2);
   display:flex;align-items:center;gap:10px;padding:0 14px;height:48px;}
-.hlogo{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--long);
-  letter-spacing:2px;flex-shrink:0;text-shadow:0 0 16px #00f0a040;}
+.hlogo{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--neu);
+  letter-spacing:2px;flex-shrink:0;}
 .hlogo em{color:var(--textlo);font-style:normal;}
 .hticker{flex:1;overflow:hidden;white-space:nowrap;font-family:var(--mono);
   font-size:.56rem;color:var(--textlo);
@@ -87,10 +87,10 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   border-radius:10px;border:1px solid var(--border);background:transparent;
   color:var(--textlo);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .ema-fbtn:active{opacity:.7;}
-.ema-fbtn.ef-all   {border-color:var(--neu);color:var(--neu);background:#3a7fff18;}
-.ema-fbtn.ef-above {border-color:var(--long);color:var(--long);background:#00f0a015;}
-.ema-fbtn.ef-below {border-color:var(--short);color:var(--short);background:#ff335515;}
-.ema-fbtn.ef-between{border-color:var(--watch);color:var(--watch);background:#ffaa0015;}
+.ema-fbtn.ef-all   {border-color:var(--neu);color:var(--neu);background:#1a5fc818;}
+.ema-fbtn.ef-above {border-color:var(--long);color:var(--long);background:#007a5215;}
+.ema-fbtn.ef-below {border-color:var(--short);color:var(--short);background:#cc113315;}
+.ema-fbtn.ef-between{border-color:var(--watch);color:var(--watch);background:#b86b0015;}
 
 .cardlist{padding:0 0 60px;}
 .load-state{padding:70px;text-align:center;color:var(--textlo);
@@ -102,7 +102,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
   cursor:pointer;border-left:3px solid transparent;animation:frow .22s ease both;}
 @keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-.coin-card:active{background:#ffffff04;}
+.coin-card:active{background:#00000008;}
 .coin-card.row-long{border-left-color:var(--long);}
 .coin-card.row-short{border-left-color:var(--short);}
 .coin-card.row-watch{border-left-color:var(--watch);}
@@ -120,19 +120,24 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .sig-long{color:var(--long);border-color:#00f0a055;background:#00f0a012;}
 .sig-short{color:var(--short);border-color:#ff335555;background:#ff335512;}
 .sig-watch{color:var(--watch);border-color:#ffaa0055;background:#ffaa0012;}
-.sig-none{color:var(--textlo);border-color:#1c2a42;background:transparent;}
+.sig-none{color:var(--textlo);border-color:var(--border);background:transparent;}
 
 /* EMA STATUS ROW */
-.ema-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap;}
+.ema-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
 .ema-pill{font-family:var(--mono);font-size:.54rem;padding:2px 8px;border-radius:10px;
   border:1px solid;font-weight:600;}
-.ep-above{color:var(--long);border-color:#00f0a045;background:#00f0a00e;}
-.ep-below{color:var(--short);border-color:#ff335545;background:#ff33550e;}
-.ep-mid{color:var(--watch);border-color:#ffaa0045;background:#ffaa000e;}
-.ema-dist{font-family:var(--mono);font-size:.5rem;color:var(--textlo);}
+.ep-above{color:var(--long);border-color:#007a5260;background:#007a520f;}
+.ep-below{color:var(--short);border-color:#cc113360;background:#cc11330f;}
+.ep-mid{color:var(--watch);border-color:#b86b0060;background:#b86b000f;}
+/* EMA distance — now bigger and coloured */
+.ema-dist-row{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+.ema-dist-tag{font-family:var(--mono);font-size:.7rem;font-weight:600;
+  padding:2px 10px;border-radius:4px;border:1px solid;}
+.edt-pos{color:var(--long);border-color:#007a5240;background:#007a520c;}
+.edt-neg{color:var(--short);border-color:#cc113340;background:#cc11330c;}
 
 .score-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
-.gbar{flex:1;height:3px;border-radius:2px;background:var(--bdr2);overflow:hidden;}
+.gbar{flex:1;height:3px;border-radius:2px;background:var(--border);overflow:hidden;}
 .gfill{height:100%;border-radius:2px;transition:width .5s;}
 .gfill-long{background:var(--long);}
 .gfill-short{background:var(--short);}
@@ -141,10 +146,10 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 
 .chips{display:flex;gap:4px;flex-wrap:wrap;}
 .chip{font-family:var(--mono);font-size:.52rem;padding:2px 6px;border-radius:2px;border:1px solid;white-space:nowrap;}
-.chip-long{color:var(--long);border-color:#00f0a040;background:#00f0a010;}
-.chip-short{color:var(--short);border-color:#ff335540;background:#ff335510;}
-.chip-watch{color:var(--watch);border-color:#ffaa0040;background:#ffaa0010;}
-.chip-neu{color:var(--textlo);border-color:#1c2a42;background:transparent;}
+.chip-long{color:var(--long);border-color:#007a5250;background:#007a520d;}
+.chip-short{color:var(--short);border-color:#cc113350;background:#cc11330d;}
+.chip-watch{color:var(--watch);border-color:#b86b0050;background:#b86b000d;}
+.chip-neu{color:var(--textlo);border-color:var(--border);background:transparent;}
 
 /* DETAIL */
 .card-detail{display:none;margin-top:10px;padding:10px 11px;
@@ -161,12 +166,12 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .edb-sub{font-family:var(--mono);font-size:.46rem;margin-top:2px;}
 .ev-long{color:var(--long);}
 .ev-short{color:var(--short);}
-.ev-neu{color:var(--text);}
+.ev-neu{color:var(--texthi);}
 
 .entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px;}
 .ebox{padding:8px 9px;border-radius:3px;border:1px solid;}
-.ebox-l{border-color:#00f0a030;background:#00f0a008;}
-.ebox-s{border-color:#ff335530;background:#ff335508;}
+.ebox-l{border-color:#007a5230;background:#007a5208;}
+.ebox-s{border-color:#cc113330;background:#cc113308;}
 .elbl{font-family:var(--mono);font-size:.48rem;color:var(--textlo);}
 .eprice{font-family:var(--mono);font-size:.84rem;font-weight:700;margin-top:3px;}
 .ep-l{color:var(--long);}
@@ -179,7 +184,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .rval{font-family:var(--mono);font-size:.68rem;font-weight:600;margin-top:2px;}
 .rv-l{color:var(--long);}
 .rv-s{color:var(--short);}
-.rv-n{color:var(--text);}
+.rv-n{color:var(--texthi);}
 
 .disc{font-family:var(--mono);font-size:.46rem;color:var(--textlo);
   margin-top:8px;padding-top:7px;border-top:1px solid var(--border);line-height:1.6;}
@@ -531,7 +536,10 @@ function renderCards(){
       <div class="ema-row">
         <span class="ema-pill ${p99cls}">${p99str}</span>
         <span class="ema-pill ${p200cls}">${p200str}</span>
-        <span class="ema-dist">距EMA99: ${d99sign}${d.distEma99}% | EMA200: ${d200sign}${d.distEma200}%</span>
+      </div>
+      <div class="ema-dist-row">
+        <span class="ema-dist-tag ${parseFloat(d.distEma99)>=0?'edt-pos':'edt-neg'}">EMA99 ${d99sign}${d.distEma99}%</span>
+        <span class="ema-dist-tag ${parseFloat(d.distEma200)>=0?'edt-pos':'edt-neg'}">EMA200 ${d200sign}${d.distEma200}%</span>
       </div>
       <div class="score-row">
         <div class="gbar"><div class="gfill ${gfCls}" style="width:${Math.min(d.score,100)}%"></div></div>
