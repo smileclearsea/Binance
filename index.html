@@ -169,35 +169,43 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 
 /* DETAIL */
 .card-detail{display:none;margin-top:10px;padding:10px 11px;
-  background:var(--bg2);border:1px solid var(--bdr2);border-radius:4px;}
+  background:var(--bg2);border:1px solid var(--bdr2);border-radius:4px;
+  overflow:hidden;}
 .coin-card.expanded .card-detail{display:block;}
 .dtitle{font-family:var(--mono);font-size:.54rem;color:var(--textlo);
-  letter-spacing:1.5px;margin-bottom:7px;margin-top:6px;}
-.dtitle:first-child{margin-top:0;}
+  letter-spacing:1.5px;margin-bottom:7px;margin-top:10px;padding-top:8px;
+  border-top:1px solid var(--border);}
+.dtitle:first-child{margin-top:0;padding-top:0;border-top:none;}
 
-.ema-detail{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:4px;}
-.edb{padding:7px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg);}
-.edb-lbl{font-family:var(--mono);font-size:.48rem;color:var(--textlo);}
-.edb-val{font-family:var(--mono);font-size:.75rem;font-weight:700;margin-top:2px;}
-.edb-sub{font-family:var(--mono);font-size:.46rem;margin-top:2px;}
+/* 三欄格 → 手機改兩欄 */
+.ema-detail{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:4px;}
+/* 若螢幕夠寬才用三欄 */
+@media(min-width:480px){.ema-detail{grid-template-columns:repeat(3,1fr);}}
+
+.edb{padding:8px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg);min-width:0;}
+.edb-lbl{font-family:var(--mono);font-size:.5rem;color:var(--textlo);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.edb-val{font-family:var(--mono);font-size:.78rem;font-weight:700;margin-top:3px;word-break:break-all;}
+.edb-sub{font-family:var(--mono);font-size:.46rem;margin-top:3px;line-height:1.4;color:var(--textlo);}
 .ev-long{color:var(--long);}
 .ev-short{color:var(--short);}
 .ev-neu{color:var(--texthi);}
 
+/* 進場兩欄 */
 .entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px;}
-.ebox{padding:8px 9px;border-radius:3px;border:1px solid;}
+.ebox{padding:10px 10px;border-radius:4px;border:1px solid;min-width:0;}
 .ebox-l{border-color:#007a5230;background:#007a5208;}
 .ebox-s{border-color:#cc113330;background:#cc113308;}
-.elbl{font-family:var(--mono);font-size:.48rem;color:var(--textlo);}
-.eprice{font-family:var(--mono);font-size:.84rem;font-weight:700;margin-top:3px;}
+.elbl{font-family:var(--mono);font-size:.5rem;color:var(--textlo);}
+.eprice{font-family:var(--mono);font-size:.82rem;font-weight:700;margin-top:4px;word-break:break-all;}
 .ep-l{color:var(--long);}
 .ep-s{color:var(--short);}
-.esub{font-family:var(--mono);font-size:.46rem;color:var(--textlo);margin-top:2px;}
+.esub{font-family:var(--mono);font-size:.46rem;color:var(--textlo);margin-top:3px;}
 
-.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-.ritem{padding:6px 8px;background:var(--bg);border-radius:2px;border:1px solid var(--border);}
-.rkey{font-family:var(--mono);font-size:.46rem;color:var(--textlo);}
-.rval{font-family:var(--mono);font-size:.68rem;font-weight:600;margin-top:2px;}
+/* 風險兩欄 */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:4px;}
+.ritem{padding:7px 9px;background:var(--bg);border-radius:3px;border:1px solid var(--border);min-width:0;}
+.rkey{font-family:var(--mono);font-size:.46rem;color:var(--textlo);line-height:1.3;}
+.rval{font-family:var(--mono);font-size:.7rem;font-weight:600;margin-top:3px;word-break:break-all;}
 .rv-l{color:var(--long);}
 .rv-s{color:var(--short);}
 .rv-n{color:var(--texthi);}
