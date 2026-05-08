@@ -42,6 +42,9 @@ header{position:sticky;top:0;z-index:200;background:#f0f4f8ee;
 .tab.t-long.on{color:var(--long);border-color:var(--long);}
 .tab.t-short.on{color:var(--short);border-color:var(--short);}
 .tab.t-watch.on{color:var(--watch);border-color:var(--watch);}
+.tab.t-ga.on{color:#007a52;border-color:#007a52;}
+.tab.t-gb.on{color:#1a5fc8;border-color:#1a5fc8;}
+.tab.t-gc.on{color:#b86b00;border-color:#b86b00;}
 
 .scanbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
   padding:9px 14px;background:var(--panel);border-bottom:1px solid var(--border);}
@@ -575,28 +578,78 @@ async function analyzeOne(ticker,fundMap,tf){
   else if(oiChg<-0.5&&chg<-1&&volRatio>1.5)smartMoney=-2;
   else if(oiChg<-0.3&&chg<0)smartMoney=-1;
 
+  // ── 布林通道 BB(20,2) ──
+  const {upper:bbUpper,mid:bbMid,lower:bbLower,bw:bbBW,pct:bbPct}=calcBB(closes,20,2);
+  // bbPct: 0=下軌, 1=上軌; bw=帶寬%（越大越波動）
+  let bbSig=0; // +2強多 +1偏多 -1偏空 -2強空
+  if(bbPct<=0.05)      bbSig= 2; // 觸下軌
+  else if(bbPct<=0.2)  bbSig= 1;
+  else if(bbPct>=0.95) bbSig=-2; // 觸上軌
+  else if(bbPct>=0.8)  bbSig=-1;
+
+  // ── KDJ(9,3,3) ──
+  const {K,D,J}=calcKDJ(highs,lows,closes,9,3);
+  const Kprev=K[K.length-2],Dprev=D[D.length-2];
+  const Klast=K[K.length-1],Dlast=D[D.length-1];
+  const Jlast=J[J.length-1];
+  let kdjSig=0;
+  // 金叉：K從下穿越D
+  if(Klast>Dlast&&Kprev<=Dprev&&Klast<50)      kdjSig= 2; // 低位金叉最強
+  else if(Klast>Dlast&&Kprev<=Dprev)            kdjSig= 1;
+  // 死叉：K從上穿越D
+  else if(Klast<Dlast&&Kprev>=Dprev&&Klast>50) kdjSig=-2; // 高位死叉最強
+  else if(Klast<Dlast&&Kprev>=Dprev)           kdjSig=-1;
+  // 超賣/超買 J值
+  if(Jlast<10&&kdjSig>=0)  kdjSig= Math.max(kdjSig, 1);
+  if(Jlast>90&&kdjSig<=0)  kdjSig= Math.min(kdjSig,-1);
+
+  // ── 量價分析 ──
+  // 近3根K線量價關係
+  const lastClose=closes[closes.length-1];
+  const prevClose=closes[closes.length-2];
+  const lastVol=vols[vols.length-1];
+  const prevVol=vols[vols.length-2];
+  const priceUp=lastClose>prevClose;
+  const volUp=lastVol>prevVol;
+  let vpSig=0; // 量價配合
+  if(priceUp&&volUp&&volRatio>1.5)       vpSig= 2; // 量增價漲 強多
+  else if(priceUp&&volUp)                vpSig= 1;
+  else if(!priceUp&&volUp&&volRatio>1.5) vpSig=-2; // 量增價跌 強空
+  else if(!priceUp&&volUp)              vpSig=-1;
+  else if(priceUp&&!volUp)              vpSig= 0.5; // 量縮價漲 弱多
+  else if(!priceUp&&!volUp)            vpSig=-0.5; // 量縮價跌 弱空
+
   // SCORING
   let ls=0,ss=0;
-  // RSI 25
-  if(rsi<25)ls+=25;else if(rsi<35)ls+=18;else if(rsi<45)ls+=8;
-  if(rsi>75)ss+=25;else if(rsi>65)ss+=18;else if(rsi>55)ss+=8;
-  // MACD 20
-  if(macdSig>=1)ls+=20;else if(macdSig>=0.5)ls+=8;
-  if(macdSig<=-1)ss+=20;else if(macdSig<=-0.5)ss+=8;
-  // EMA 25
-  if(emaScore>=25)ls+=25;else if(emaScore>=20)ls+=20;else if(emaScore>0)ls+=8;
-  if(emaScore<=-25)ss+=25;else if(emaScore<=-20)ss+=20;else if(emaScore<0)ss+=8;
-  // Breakout 10
-  if(breakout===1)ls+=10;
-  if(breakout===-1)ss+=10;
-  // Volume 8
-  if(volRatio>3){ls+=8;ss+=8;}else if(volRatio>2){ls+=5;ss+=5;}else if(volRatio>1.5){ls+=3;ss+=3;}
-  // Funding 12
-  if(funding<-0.08)ls+=12;else if(funding<-0.03)ls+=6;
-  if(funding>0.08)ss+=12;else if(funding>0.03)ss+=6;
-  // Smart money 12
-  if(smartMoney===2)ls+=12;else if(smartMoney===1)ls+=6;
-  if(smartMoney===-2)ss+=12;else if(smartMoney===-1)ss+=6;
+  // RSI (20分)
+  if(rsi<25)ls+=20;else if(rsi<35)ls+=14;else if(rsi<45)ls+=6;
+  if(rsi>75)ss+=20;else if(rsi>65)ss+=14;else if(rsi>55)ss+=6;
+  // MACD (15分)
+  if(macdSig>=1)ls+=15;else if(macdSig>=0.5)ls+=6;
+  if(macdSig<=-1)ss+=15;else if(macdSig<=-0.5)ss+=6;
+  // EMA (20分)
+  if(emaScore>=25)ls+=20;else if(emaScore>=20)ls+=16;else if(emaScore>0)ls+=6;
+  if(emaScore<=-25)ss+=20;else if(emaScore<=-20)ss+=16;else if(emaScore<0)ss+=6;
+  // 布林通道 BB (12分)
+  if(bbSig>=2)ls+=12;else if(bbSig>=1)ls+=6;
+  if(bbSig<=-2)ss+=12;else if(bbSig<=-1)ss+=6;
+  // KDJ (12分)
+  if(kdjSig>=2)ls+=12;else if(kdjSig>=1)ls+=6;
+  if(kdjSig<=-2)ss+=12;else if(kdjSig<=-1)ss+=6;
+  // 量價分析 VP (10分)
+  if(vpSig>=2)ls+=10;else if(vpSig>=1)ls+=5;else if(vpSig>=0.5)ls+=2;
+  if(vpSig<=-2)ss+=10;else if(vpSig<=-1)ss+=5;else if(vpSig<=-0.5)ss+=2;
+  // Breakout (8分)
+  if(breakout===1)ls+=8;
+  if(breakout===-1)ss+=8;
+  // Volume ratio (6分)
+  if(volRatio>3){ls+=6;ss+=6;}else if(volRatio>2){ls+=4;ss+=4;}else if(volRatio>1.5){ls+=2;ss+=2;}
+  // Funding (10分)
+  if(funding<-0.08)ls+=10;else if(funding<-0.03)ls+=5;
+  if(funding>0.08)ss+=10;else if(funding>0.03)ss+=5;
+  // Smart money (10分)
+  if(smartMoney===2)ls+=10;else if(smartMoney===1)ls+=5;
+  if(smartMoney===-2)ss+=10;else if(smartMoney===-1)ss+=5;
 
   const THRESH=42;
   let signal='none';
@@ -615,6 +668,8 @@ async function analyzeOne(ticker,fundMap,tf){
     symbol:sym.replace('USDT',''),rawSym:sym,
     price,chg,rsi,macdSig,breakout,volRatio,funding,
     oiChg,smartMoney,ls,ss,score,signal,emaScore,grade,btcOk,
+    bbUpper,bbMid,bbLower,bbBW,bbPct,bbSig,
+    Klast,Dlast,Jlast,kdjSig,vpSig,
     ema99,ema200,ema99dir,ema200dir,
     aboveEma99,aboveEma200,emaStatus,
     distEma99,distEma200,
@@ -645,6 +700,39 @@ function calcMACD(closes,fast=12,slow=26,sig=9){
   const ml=ef.map((v,i)=>v-es[i]);
   const sl=calcEMA(ml.slice(slow-1),sig);
   return{hist:sl.map((v,i)=>ml[slow-1+i]-v)};
+}
+
+// ── 布林通道 BB(n, multiplier) ──
+function calcBB(closes,n=20,mult=2){
+  const slice=closes.slice(-n);
+  const mid=avg(slice);
+  const variance=slice.reduce((s,v)=>s+(v-mid)**2,0)/n;
+  const std=Math.sqrt(variance);
+  const upper=mid+mult*std;
+  const lower=mid-mult*std;
+  const price=closes[closes.length-1];
+  const bw=mid>0?(upper-lower)/mid*100:0; // 帶寬%
+  const pct=(upper-lower)>0?(price-lower)/(upper-lower):0.5; // %B
+  return{upper,mid,lower,bw:+bw.toFixed(2),pct:+pct.toFixed(3)};
+}
+
+// ── KDJ(9,3,3) ──
+function calcKDJ(highs,lows,closes,n=9,m=3){
+  const len=closes.length;
+  const K=[],D=[],J=[];
+  let prevK=50,prevD=50;
+  for(let i=0;i<len;i++){
+    const start=Math.max(0,i-n+1);
+    const hh=Math.max(...highs.slice(start,i+1));
+    const ll=Math.min(...lows.slice(start,i+1));
+    const rsv=hh===ll?50:(closes[i]-ll)/(hh-ll)*100;
+    const k=(prevK*(m-1)+rsv)/m;
+    const d=(prevD*(m-1)+k)/m;
+    const j=3*k-2*d;
+    K.push(k);D.push(d);J.push(j);
+    prevK=k;prevD=d;
+  }
+  return{K,D,J};
 }
 function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;}
 function fmtP(p){
@@ -716,6 +804,32 @@ function renderCards(){
     else if(d.smartMoney===-2){smStr='聰明錢↓↓';smCls='chip-short';}
     else if(d.smartMoney===-1){smStr='聰明錢↓';smCls='chip-short';}
     else{smStr='聰明錢中性';smCls='chip-neu';}
+    // BB chips
+    let bbStr,bbCls;
+    if(d.bbSig>=2){bbStr='BB觸下軌';bbCls='chip-long';}
+    else if(d.bbSig>=1){bbStr='BB偏下';bbCls='chip-long';}
+    else if(d.bbSig<=-2){bbStr='BB觸上軌';bbCls='chip-short';}
+    else if(d.bbSig<=-1){bbStr='BB偏上';bbCls='chip-short';}
+    else{bbStr='BB中軌';bbCls='chip-neu';}
+    const bbPctStr=(d.bbPct*100).toFixed(0)+'%';
+
+    // KDJ chips
+    let kdjStr,kdjCls;
+    if(d.kdjSig>=2){kdjStr='KDJ低位金叉';kdjCls='chip-long';}
+    else if(d.kdjSig>=1){kdjStr='KDJ金叉';kdjCls='chip-long';}
+    else if(d.kdjSig<=-2){kdjStr='KDJ高位死叉';kdjCls='chip-short';}
+    else if(d.kdjSig<=-1){kdjStr='KDJ死叉';kdjCls='chip-short';}
+    else{kdjStr=`KDJ K${d.Klast.toFixed(0)}`;kdjCls=d.Klast<30?'chip-long':d.Klast>70?'chip-short':'chip-neu';}
+
+    // Volume chips
+    let vpStr,vpCls;
+    if(d.vpSig>=2){vpStr='量增價漲 ▲';vpCls='chip-long';}
+    else if(d.vpSig>=1){vpStr='量價同升';vpCls='chip-long';}
+    else if(d.vpSig<=-2){vpStr='量增價跌 ▼';vpCls='chip-short';}
+    else if(d.vpSig<=-1){vpStr='量價背離';vpCls='chip-short';}
+    else if(d.vpSig>0){vpStr='縮量上漲';vpCls='chip-watch';}
+    else{vpStr='縮量下跌';vpCls='chip-watch';}
+
     const gfCls=d.signal==='short'?'gfill-short':d.signal==='watch'?'gfill-watch':'gfill-long';
 
     // Grade
@@ -766,8 +880,82 @@ function renderCards(){
         <span class="chip ${smCls}">${smStr}</span>
         ${btcChip}
       </div>
+      <div class="chips" style="margin-top:4px">
+        ${(()=>{
+          // BB chip
+          let bbStr,bbCls;
+          if(d.bbSig>=2){bbStr='BB下軌触碰';bbCls='chip-long';}
+          else if(d.bbSig>=1){bbStr='BB偏低';bbCls='chip-long';}
+          else if(d.bbSig<=-2){bbStr='BB上軌触碰';bbCls='chip-short';}
+          else if(d.bbSig<=-1){bbStr='BB偏高';bbCls='chip-short';}
+          else{bbStr=`BB中軌`;bbCls='chip-neu';}
+          const bbPctStr=`%B ${(d.bbPct*100).toFixed(0)}%`;
+          // KDJ chip
+          let kdjStr,kdjCls;
+          if(d.kdjSig>=2){kdjStr='KDJ金叉↑';kdjCls='chip-long';}
+          else if(d.kdjSig>=1){kdjStr='KDJ偏多';kdjCls='chip-long';}
+          else if(d.kdjSig<=-2){kdjStr='KDJ死叉↓';kdjCls='chip-short';}
+          else if(d.kdjSig<=-1){kdjStr='KDJ偏空';kdjCls='chip-short';}
+          else{kdjStr='KDJ中性';kdjCls='chip-neu';}
+          const kdjVal=`K${d.Klast.toFixed(0)} D${d.Dlast.toFixed(0)} J${d.Jlast.toFixed(0)}`;
+          // VP chip
+          let vpStr,vpCls;
+          if(d.vpSig>=2){vpStr='量增價漲▲';vpCls='chip-long';}
+          else if(d.vpSig>=1){vpStr='量價偏多';vpCls='chip-long';}
+          else if(d.vpSig<=-2){vpStr='量增價跌▼';vpCls='chip-short';}
+          else if(d.vpSig<=-1){vpStr='量價偏空';vpCls='chip-short';}
+          else if(d.vpSig>0){vpStr='量縮價漲';vpCls='chip-watch';}
+          else{vpStr='量縮價跌';vpCls='chip-watch';}
+          return `<span class="chip ${bbCls}">${bbStr} ${bbPctStr}</span>
+          <span class="chip ${kdjCls}">${kdjStr} ${kdjVal}</span>
+          <span class="chip ${vpCls}">${vpStr}</span>`;
+        })()}
+      </div>
       ${showCorr?`<div class="corr-warn show">⚠ 同方向信號過多（山寨幣高度相關），建議最多只選 1-2 個</div>`:''}
       <div class="card-detail">
+        <div class="dtitle">▸ 布林通道 BB(20,2)</div>
+        <div class="ema-detail">
+          <div class="edb">
+            <div class="edb-lbl">上軌（阻力）</div>
+            <div class="edb-val ev-short">${fmtP(d.bbUpper)}</div>
+            <div class="edb-sub" style="color:var(--textlo)">觸碰=超買</div>
+          </div>
+          <div class="edb">
+            <div class="edb-lbl">中軌 MA20</div>
+            <div class="edb-val ev-neu">${fmtP(d.bbMid)}</div>
+            <div class="edb-sub" style="color:var(--textlo)">%B: ${(d.bbPct*100).toFixed(0)}% | 帶寬: ${d.bbBW}%</div>
+          </div>
+          <div class="edb">
+            <div class="edb-lbl">下軌（支撐）</div>
+            <div class="edb-val ev-long">${fmtP(d.bbLower)}</div>
+            <div class="edb-sub" style="color:var(--textlo)">觸碰=超賣</div>
+          </div>
+        </div>
+        <div class="dtitle">▸ KDJ(9,3,3)</div>
+        <div class="ema-detail">
+          <div class="edb">
+            <div class="edb-lbl">K 值</div>
+            <div class="edb-val ${d.Klast<30?'ev-long':d.Klast>70?'ev-short':'ev-neu'}">${d.Klast.toFixed(1)}</div>
+            <div class="edb-sub" style="color:var(--textlo)">${d.Klast<30?'⬇ 超賣區':d.Klast>70?'⬆ 超買區':'中性區'}</div>
+          </div>
+          <div class="edb">
+            <div class="edb-lbl">D 值</div>
+            <div class="edb-val ${d.Dlast<30?'ev-long':d.Dlast>70?'ev-short':'ev-neu'}">${d.Dlast.toFixed(1)}</div>
+            <div class="edb-sub" style="color:var(--textlo)">${d.Klast>d.Dlast?'K>D 金叉趨勢':'K<D 死叉趨勢'}</div>
+          </div>
+          <div class="edb">
+            <div class="edb-lbl">J 值（敏感）</div>
+            <div class="edb-val ${d.Jlast<10?'ev-long':d.Jlast>90?'ev-short':'ev-neu'}">${d.Jlast.toFixed(1)}</div>
+            <div class="edb-sub" style="color:var(--textlo)">${d.Jlast<10?'極超賣 強反彈':d.Jlast>90?'極超買 危險':d.Jlast<30?'偏超賣':d.Jlast>70?'偏超買':'正常'}</div>
+          </div>
+        </div>
+        <div class="dtitle">▸ 成交量分析</div>
+        <div class="risk-grid" style="margin-bottom:8px">
+          <div class="ritem"><div class="rkey">量比（近3根/前均）</div><div class="rval ${d.volRatio>2?'rv-l':d.volRatio<0.5?'rv-s':'rv-n'}">${d.volRatio.toFixed(2)}x ${d.volRatio>2?'放量':d.volRatio<0.8?'縮量':'正常'}</div></div>
+          <div class="ritem"><div class="rkey">量價關係</div><div class="rval ${d.vpSig>=1?'rv-l':d.vpSig<=-1?'rv-s':'rv-n'}">${d.vpSig>=2?'量增價漲 強多':d.vpSig>=1?'量價同升':d.vpSig<=-2?'量增價跌 強空':d.vpSig<=-1?'量增價跌':'量縮震盪'}</div></div>
+          <div class="ritem"><div class="rkey">資金費率</div><div class="rval ${d.funding<-0.03?'rv-l':d.funding>0.03?'rv-s':'rv-n'}">${(d.funding>=0?'+':'')+d.funding.toFixed(4)}%</div></div>
+          <div class="ritem"><div class="rkey">聰明錢方向</div><div class="rval ${d.smartMoney>0?'rv-l':d.smartMoney<0?'rv-s':'rv-n'}">${d.smartMoney>=2?'強多↑↑':d.smartMoney===1?'偏多↑':d.smartMoney<=-2?'強空↓↓':d.smartMoney===-1?'偏空↓':'中性'}</div></div>
+        </div>
         <div class="dtitle">▸ EMA 趨勢詳情</div>
         <div class="ema-detail">
           <div class="edb">
@@ -785,6 +973,17 @@ function renderCards(){
             <div class="edb-val ${ema200vcls}">${fmtP(d.ema200)}</div>
             <div class="edb-sub" style="color:${ema200dircol}">${d.ema200dir==='up'?'↑ 向上':'↓ 向下'} | 價格${d.aboveEma200?'上方':'下方'}</div>
           </div>
+        </div>
+        <div class="dtitle">▸ 布林通道 / KDJ / 量價</div>
+        <div class="risk-grid" style="margin-bottom:8px">
+          <div class="ritem"><div class="rkey">BB 上軌</div><div class="rval rv-s">${fmtP(d.bbUpper)}</div></div>
+          <div class="ritem"><div class="rkey">BB 中軌</div><div class="rval rv-n">${fmtP(d.bbMid)}</div></div>
+          <div class="ritem"><div class="rkey">BB 下軌</div><div class="rval rv-l">${fmtP(d.bbLower)}</div></div>
+          <div class="ritem"><div class="rkey">BB 帶寬%</div><div class="rval rv-n">${d.bbBW}%</div></div>
+          <div class="ritem"><div class="rkey">KDJ · K值</div><div class="rval ${d.Klast>d.Dlast?'rv-l':'rv-s'}">${d.Klast.toFixed(1)}</div></div>
+          <div class="ritem"><div class="rkey">KDJ · D值</div><div class="rval rv-n">${d.Dlast.toFixed(1)}</div></div>
+          <div class="ritem"><div class="rkey">KDJ · J值</div><div class="rval ${d.Jlast<20?'rv-l':d.Jlast>80?'rv-s':'rv-n'}">${d.Jlast.toFixed(1)}</div></div>
+          <div class="ritem"><div class="rkey">量比</div><div class="rval ${d.volRatio>2?'rv-l':'rv-n'}">${d.volRatio.toFixed(2)}x</div></div>
         </div>
         <div class="dtitle">▸ 進場點位（現價回踩 0.3%）</div>
         <div class="entry-grid">
