@@ -80,6 +80,19 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   color:var(--textlo);cursor:pointer;}
 .sort-btn.active{border-color:var(--neu);color:var(--neu);}
 
+/* GRADE FILTER */
+.gradebar{display:flex;gap:6px;flex-wrap:wrap;padding:7px 14px;
+  background:var(--bg2);border-bottom:1px solid var(--border);align-items:center;}
+.gf-lbl{font-family:var(--mono);font-size:.53rem;color:var(--textlo);}
+.gf-btn{font-family:var(--mono);font-size:.6rem;padding:4px 14px;
+  border-radius:10px;border:2px solid var(--border);background:transparent;
+  color:var(--textlo);cursor:pointer;font-weight:600;white-space:nowrap;transition:all .15s;}
+.gf-btn:active{opacity:.7;}
+.gf-btn.gf-on-all {border-color:var(--neu);color:var(--neu);background:#1a5fc815;}
+.gf-btn.gf-on-a   {border-color:var(--long);color:var(--long);background:#007a5215;}
+.gf-btn.gf-on-b   {border-color:var(--neu);color:var(--neu);background:#1a5fc815;}
+.gf-btn.gf-on-c   {border-color:var(--watch);color:var(--watch);background:#b86b0015;}
+
 .emabar{display:flex;gap:6px;flex-wrap:wrap;padding:7px 14px;
   background:var(--bg);border-bottom:1px solid var(--border);align-items:center;}
 .ema-flbl{font-family:var(--mono);font-size:.53rem;color:var(--textlo);}
@@ -327,6 +340,14 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   <button class="sort-btn" onclick="setSortKey('emaScore',this)">EMA強度</button>
 </div>
 
+<div class="gradebar">
+  <span class="gf-lbl">評級：</span>
+  <button class="gf-btn gf-on-all" onclick="setGradeFilter('all',this)">全部</button>
+  <button class="gf-btn" onclick="setGradeFilter('A',this)">🟢 A級 僅精選</button>
+  <button class="gf-btn" onclick="setGradeFilter('B',this)">🔵 B級以上</button>
+  <button class="gf-btn" onclick="setGradeFilter('C',this)">🟡 C級（觀察）</button>
+</div>
+
 <div class="emabar">
   <span class="ema-flbl">EMA篩選：</span>
   <button class="ema-fbtn ef-all"     onclick="setEmaFilter('all',this)">全部</button>
@@ -361,8 +382,13 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 <script>
 const API='https://fapi.binance.com';
 const BATCH=5;
-let allData=[],curTab='all',sortKey='score',sortDir=-1,emaFilter='all',searchQuery='';
+let allData=[],curTab='all',sortKey='score',sortDir=-1,emaFilter='all',searchQuery='',gradeFilter='all';
 let btcTrend='neutral'; // 'bull' | 'bear' | 'neutral'
+
+// 排除美股代幣 & 金屬代幣
+const EXCLUDE_PREFIXES=['1000AAPL','AAPL','TSLA','AMZN','GOOGL','MSFT','NVDA','META','NFLX',
+  'BABA','UBER','COIN','PYPL','AMD','INTC','BIDU','JNJ','V','JPM','BAC','WMT','DIS',
+  'XAU','XAG','XPT','XPD','GOLD','SILVER','PAXG','CACHE'];
 
 async function startScan(){
   const btn=document.getElementById('scanBtn');
@@ -379,8 +405,13 @@ async function startScan(){
     // ── BTC 大盤分析 ──
     await analyzeBTC(tf);
 
-    let usdtT=tickers.filter(t=>t.symbol.endsWith('USDT'))
-      .sort((a,b)=>parseFloat(b.quoteVolume)-parseFloat(a.quoteVolume));
+    let usdtT=tickers.filter(t=>{
+      if(!t.symbol.endsWith('USDT')) return false;
+      const base=t.symbol.replace('USDT','');
+      // 排除美股 & 金屬代幣
+      if(EXCLUDE_PREFIXES.some(p=>base===p||base.startsWith(p))) return false;
+      return true;
+    }).sort((a,b)=>parseFloat(b.quoteVolume)-parseFloat(a.quoteVolume));
     if(topN<9999)usdtT=usdtT.slice(0,topN);
     const fundMap={};
     fundingArr.forEach(f=>{fundMap[f.symbol]=parseFloat(f.lastFundingRate)*100;});
@@ -636,6 +667,10 @@ function renderCards(){
   else if(emaFilter==='above200') data=data.filter(d=>d.aboveEma200);
   else if(emaFilter==='below200') data=data.filter(d=>!d.aboveEma200);
   else if(emaFilter==='between')  data=data.filter(d=>d.emaStatus==='between');
+  // Grade filter
+  if(gradeFilter==='A') data=data.filter(d=>d.grade==='A');
+  else if(gradeFilter==='B') data=data.filter(d=>d.grade==='A'||d.grade==='B');
+  else if(gradeFilter==='C') data=data.filter(d=>d.grade==='C');
   // Search filter
   if(searchQuery){
     const q=searchQuery.toUpperCase().replace(/USDT$/,'');
@@ -796,6 +831,13 @@ function updateTicker(){
     top.map(d=>`${d.symbol} ${d.chg>=0?'▲':'▼'}${Math.abs(d.chg).toFixed(1)}%`).join('  ·  ');
 }
 
+function setGradeFilter(g,el){
+  gradeFilter=g;
+  document.querySelectorAll('.gf-btn').forEach(b=>b.className='gf-btn');
+  const cls=g==='A'?'gf-on-a':g==='B'?'gf-on-b':g==='C'?'gf-on-c':'gf-on-all';
+  el.classList.add(cls);
+  renderCards();
+}
 function onSearch(val){
   searchQuery=val.trim();
   // 若搜尋時資料還沒載入，直接跳過
