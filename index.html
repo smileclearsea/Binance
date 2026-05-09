@@ -108,7 +108,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .ema-fbtn.ef-below {border-color:var(--short);color:var(--short);background:#cc113315;}
 .ema-fbtn.ef-between{border-color:var(--watch);color:var(--watch);background:#b86b0015;}
 
-.cardlist{padding:0 0 60px;}
+.cardlist{padding:0 0 60px;overflow:hidden;width:100%;}
 .load-state{padding:70px;text-align:center;color:var(--textlo);
   font-family:var(--mono);font-size:.7rem;letter-spacing:2px;}
 .spin{display:inline-block;animation:sp 1s linear infinite;margin-right:6px;}
@@ -116,23 +116,27 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .empty{padding:50px;text-align:center;color:var(--textlo);}
 
 .coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
-  cursor:pointer;border-left:3px solid transparent;animation:frow .22s ease both;}
+  cursor:pointer;border-left:3px solid transparent;animation:frow .22s ease both;
+  width:100%;overflow:hidden;box-sizing:border-box;position:relative;}
 @keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 .coin-card:active{background:#00000008;}
 .coin-card.row-long{border-left-color:var(--long);}
 .coin-card.row-short{border-left-color:var(--short);}
 .coin-card.row-watch{border-left-color:var(--watch);}
 
-.card-top{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap;}
-.card-sym{font-family:var(--mono);font-weight:700;color:var(--texthi);font-size:.84rem;}
+/* card-top: 幣名+價格一行，信號badge獨立右側 */
+.card-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;width:100%;}
+.card-top-left{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;min-width:0;}
+.card-sym{font-family:var(--mono);font-weight:700;color:var(--texthi);font-size:.84rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;}
 .card-sym sub{color:var(--textlo);font-weight:400;font-size:.52rem;vertical-align:baseline;}
-.card-price{font-family:var(--mono);font-size:.72rem;color:var(--text);}
-.card-chg{font-family:var(--mono);font-size:.7rem;}
+.card-price{font-family:var(--mono);font-size:.72rem;color:var(--text);white-space:nowrap;}
+.card-chg{font-family:var(--mono);font-size:.7rem;white-space:nowrap;}
 .pos{color:var(--long);}
 .neg{color:var(--short);}
 .sig{display:inline-flex;align-items:center;padding:3px 9px;border-radius:2px;
   font-family:var(--mono);font-size:.58rem;letter-spacing:1px;font-weight:700;
-  border:1px solid;margin-left:auto;flex-shrink:0;}
+  border:1px solid;flex-shrink:0;white-space:nowrap;}
 .sig-long{color:var(--long);border-color:#00f0a055;background:#00f0a012;}
 .sig-short{color:var(--short);border-color:#ff335555;background:#ff335512;}
 .sig-watch{color:var(--watch);border-color:#ffaa0055;background:#ffaa0012;}
@@ -861,10 +865,12 @@ function renderCards(){
 
     return`<div class="coin-card ${rowCls}" onclick="toggleCard(this)" style="animation-delay:${idx*7}ms">
       <div class="card-top">
-        <span class="grade ${gradeCls}">${d.grade}</span>
-        <span class="card-sym">${d.symbol}<sub>/USDT</sub></span>
-        <span class="card-price">${fmtP(d.price)}</span>
-        <span class="card-chg ${chgCls}">${chgStr}</span>
+        <div class="card-top-left">
+          <span class="grade ${gradeCls}">${d.grade}</span>
+          <span class="card-sym">${d.symbol}<sub>/USDT</sub></span>
+          <span class="card-price">${fmtP(d.price)}</span>
+          <span class="card-chg ${chgCls}">${chgStr}</span>
+        </div>
         <span class="sig ${sigCls}">${sigStr}</span>
       </div>
       <div class="ema-row">
