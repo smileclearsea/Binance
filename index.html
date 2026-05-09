@@ -119,13 +119,12 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .coin-card:active{background:#00000008;}
 
 /* card-top: 幣名+價格一行，信號badge獨立右側 */
-.card-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;width:100%;}
-.card-top-left{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;min-width:0;}
-.card-sym{font-family:var(--mono);font-weight:700;color:var(--texthi);font-size:.84rem;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;}
-.card-sym sub{color:var(--textlo);font-weight:400;font-size:.52rem;vertical-align:baseline;}
-.card-price{font-family:var(--mono);font-size:.72rem;color:var(--text);white-space:nowrap;}
-.card-chg{font-family:var(--mono);font-size:.7rem;white-space:nowrap;}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;width:100%;}
+.card-top-left{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:hidden;}
+.card-sym{font-family:var(--mono);font-weight:700;color:var(--texthi);font-size:.82rem;white-space:nowrap;flex-shrink:0;}
+.card-sym sub{color:var(--textlo);font-weight:400;font-size:.5rem;}
+.card-price{font-family:var(--mono);font-size:.7rem;color:var(--text);white-space:nowrap;flex-shrink:0;}
+.card-chg{font-family:var(--mono);font-size:.68rem;white-space:nowrap;flex-shrink:0;}
 .pos{color:var(--long);}
 .neg{color:var(--short);}
 .sig{display:inline-flex;align-items:center;padding:3px 9px;border-radius:2px;
@@ -449,7 +448,7 @@ async function startScan(){
 // ── BTC 大盤分析 ──
 async function analyzeBTC(tf){
   try{
-    const klines=await fetchJ(`${API}/fapi/v1/klines?symbol=BTCUSDT&interval=${tf}&limit=210`);
+    const klines=await fetchJ(`${API}/fapi/v1/klines?symbol=BTCUSDT&interval=${tf}&limit=500`);
     const closes=klines.map(k=>parseFloat(k[4]));
     const price=closes[closes.length-1];
     const ema99arr=calcEMA(closes,99);
@@ -519,8 +518,8 @@ async function analyzeOne(ticker,fundMap,tf){
   const price=parseFloat(ticker.lastPrice);
   const chg=parseFloat(ticker.priceChangePercent);
 
-  // 需要210根計算EMA200
-  const klines=await fetchJ(`${API}/fapi/v1/klines?symbol=${sym}&interval=${tf}&limit=210`);
+  // 需要500根K線讓EMA有足夠熱身期（尤其1D時框的EMA200）
+  const klines=await fetchJ(`${API}/fapi/v1/klines?symbol=${sym}&interval=${tf}&limit=500`);
   const closes=klines.map(k=>parseFloat(k[4]));
   const highs=klines.map(k=>parseFloat(k[2]));
   const lows=klines.map(k=>parseFloat(k[3]));
@@ -844,6 +843,31 @@ function renderCards(){
     else if(d.vpSig>0){vpStr='縮量上漲';vpCls='chip-watch';}
     else{vpStr='縮量下跌';vpCls='chip-watch';}
 
+    // BB chip
+    let bbStr2,bbCls2;
+    if(d.bbSig>=2){bbStr2='BB下軌触碰';bbCls2='chip-long';}
+    else if(d.bbSig>=1){bbStr2='BB偏低';bbCls2='chip-long';}
+    else if(d.bbSig<=-2){bbStr2='BB上軌触碰';bbCls2='chip-short';}
+    else if(d.bbSig<=-1){bbStr2='BB偏高';bbCls2='chip-short';}
+    else{bbStr2='BB中軌';bbCls2='chip-neu';}
+    const bbPctStr2=`%B ${(d.bbPct*100).toFixed(0)}%`;
+    // KDJ chip
+    let kdjStr2,kdjCls2;
+    if(d.kdjSig>=2){kdjStr2='KDJ金叉↑';kdjCls2='chip-long';}
+    else if(d.kdjSig>=1){kdjStr2='KDJ偏多';kdjCls2='chip-long';}
+    else if(d.kdjSig<=-2){kdjStr2='KDJ死叉↓';kdjCls2='chip-short';}
+    else if(d.kdjSig<=-1){kdjStr2='KDJ偏空';kdjCls2='chip-short';}
+    else{kdjStr2='KDJ中性';kdjCls2='chip-neu';}
+    const kdjVal2=`K${d.Klast.toFixed(0)} D${d.Dlast.toFixed(0)} J${d.Jlast.toFixed(0)}`;
+    // VP chip
+    let vpStr2,vpCls2;
+    if(d.vpSig>=2){vpStr2='量增價漲▲';vpCls2='chip-long';}
+    else if(d.vpSig>=1){vpStr2='量價偏多';vpCls2='chip-long';}
+    else if(d.vpSig<=-2){vpStr2='量增價跌▼';vpCls2='chip-short';}
+    else if(d.vpSig<=-1){vpStr2='量價偏空';vpCls2='chip-short';}
+    else if(d.vpSig>0){vpStr2='量縮價漲';vpCls2='chip-watch';}
+    else{vpStr2='量縮價跌';vpCls2='chip-watch';}
+
     const gfCls=d.signal==='short'?'gfill-short':d.signal==='watch'?'gfill-watch':'gfill-long';
 
     // Grade
@@ -897,35 +921,9 @@ function renderCards(){
         ${btcChip}
       </div>
       <div class="chips" style="margin-top:4px">
-        ${(()=>{
-          // BB chip
-          let bbStr,bbCls;
-          if(d.bbSig>=2){bbStr='BB下軌触碰';bbCls='chip-long';}
-          else if(d.bbSig>=1){bbStr='BB偏低';bbCls='chip-long';}
-          else if(d.bbSig<=-2){bbStr='BB上軌触碰';bbCls='chip-short';}
-          else if(d.bbSig<=-1){bbStr='BB偏高';bbCls='chip-short';}
-          else{bbStr=`BB中軌`;bbCls='chip-neu';}
-          const bbPctStr=`%B ${(d.bbPct*100).toFixed(0)}%`;
-          // KDJ chip
-          let kdjStr,kdjCls;
-          if(d.kdjSig>=2){kdjStr='KDJ金叉↑';kdjCls='chip-long';}
-          else if(d.kdjSig>=1){kdjStr='KDJ偏多';kdjCls='chip-long';}
-          else if(d.kdjSig<=-2){kdjStr='KDJ死叉↓';kdjCls='chip-short';}
-          else if(d.kdjSig<=-1){kdjStr='KDJ偏空';kdjCls='chip-short';}
-          else{kdjStr='KDJ中性';kdjCls='chip-neu';}
-          const kdjVal=`K${d.Klast.toFixed(0)} D${d.Dlast.toFixed(0)} J${d.Jlast.toFixed(0)}`;
-          // VP chip
-          let vpStr,vpCls;
-          if(d.vpSig>=2){vpStr='量增價漲▲';vpCls='chip-long';}
-          else if(d.vpSig>=1){vpStr='量價偏多';vpCls='chip-long';}
-          else if(d.vpSig<=-2){vpStr='量增價跌▼';vpCls='chip-short';}
-          else if(d.vpSig<=-1){vpStr='量價偏空';vpCls='chip-short';}
-          else if(d.vpSig>0){vpStr='量縮價漲';vpCls='chip-watch';}
-          else{vpStr='量縮價跌';vpCls='chip-watch';}
-          return `<span class="chip ${bbCls}">${bbStr} ${bbPctStr}</span>
-          <span class="chip ${kdjCls}">${kdjStr} ${kdjVal}</span>
-          <span class="chip ${vpCls}">${vpStr}</span>`;
-        })()}
+        <span class="chip ${bbCls2}">${bbStr2} ${bbPctStr2}</span>
+        <span class="chip ${kdjCls2}">${kdjStr2} ${kdjVal2}</span>
+        <span class="chip ${vpCls2}">${vpStr2}</span>
       </div>
       ${showCorr?`<div class="corr-warn show">⚠ 同方向信號過多（山寨幣高度相關），建議最多只選 1-2 個</div>`:''}
       <div class="card-detail">
