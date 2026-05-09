@@ -14,8 +14,8 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans TC',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{overflow-x:hidden;max-width:100vw;}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+html{width:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;width:100%;}
 
 header{position:sticky;top:0;z-index:200;background:#f0f4f8ee;
   backdrop-filter:blur(14px);border-bottom:1px solid var(--bdr2);
@@ -107,7 +107,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .ema-fbtn.ef-below {border-color:var(--short);color:var(--short);background:#cc113315;}
 .ema-fbtn.ef-between{border-color:var(--watch);color:var(--watch);background:#b86b0015;}
 
-.cardlist{padding:0 0 60px;width:100%;max-width:100%;overflow:hidden;}
+.cardlist{padding:0 0 60px;width:100%;}
 .load-state{padding:70px;text-align:center;color:var(--textlo);
   font-family:var(--mono);font-size:.7rem;letter-spacing:2px;}
 .spin{display:inline-block;animation:sp 1s linear infinite;margin-right:6px;}
@@ -115,13 +115,9 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .empty{padding:50px;text-align:center;color:var(--textlo);}
 
 .coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
-  cursor:pointer;animation:frow .22s ease both;
-  width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;}
+  cursor:pointer;animation:frow .22s ease both;width:100%;}
 @keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 .coin-card:active{background:#00000008;}
-.coin-card.row-long{}
-.coin-card.row-short{}
-.coin-card.row-watch{}
 
 /* card-top: 幣名+價格一行，信號badge獨立右側 */
 .card-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;width:100%;}
