@@ -115,8 +115,7 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .empty{padding:50px;text-align:center;color:var(--textlo);}
 
 .coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
-  cursor:pointer;animation:frow .22s ease both;width:100%;}
-@keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  cursor:pointer;width:100%;}
 .coin-card:active{background:#00000008;}
 
 /* card-top: 幣名+價格一行，信號badge獨立右側 */
@@ -866,7 +865,7 @@ function renderCards(){
     const ema99dircol=d.ema99dir==='up'?'var(--long)':'var(--short)';
     const ema200dircol=d.ema200dir==='up'?'var(--long)':'var(--short)';
 
-    return`<div class="coin-card ${rowCls}" onclick="toggleCard(this)" style="animation-delay:${idx*7}ms">
+    return`<div class="coin-card ${rowCls}" onclick="toggleCard(this)">`+`
       <div class="card-top">
         <div class="card-top-left">
           <span class="grade ${gradeCls}">${d.grade}</span>
