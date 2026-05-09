@@ -14,10 +14,12 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans TC',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{overflow-x:hidden;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;
   background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:48px 48px;opacity:.35;pointer-events:none;z-index:0;}
+  background-size:48px 48px;background-position:14px 0;
+  opacity:.2;pointer-events:none;z-index:0;}
 
 header{position:sticky;top:0;z-index:200;background:#f0f4f8ee;
   backdrop-filter:blur(14px);border-bottom:1px solid var(--bdr2);
@@ -355,7 +357,8 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
   <button class="sort-btn" data-key="chg" onclick="setSortKey('chg',this)">漲跌%</button>
   <button class="sort-btn" data-key="volRatio" onclick="setSortKey('volRatio',this)">量比</button>
   <button class="sort-btn" data-key="funding" onclick="setSortKey('funding',this)">資費率</button>
-  <button class="sort-btn" data-key="emaScore" onclick="setSortKey('emaScore',this)">EMA強度</button>
+  <button class="sort-btn" data-key="distEma99Abs" onclick="setSortKey('distEma99Abs',this)">EMA99距離</button>
+  <button class="sort-btn" data-key="distEma200Abs" onclick="setSortKey('distEma200Abs',this)">EMA200距離</button>
 </div>
 
 <div class="gradebar">
@@ -693,6 +696,8 @@ async function analyzeOne(ticker,fundMap,tf){
     ema99,ema200,ema99dir,ema200dir,
     aboveEma99,aboveEma200,emaStatus,
     distEma99,distEma200,
+    distEma99Abs:Math.abs(parseFloat(distEma99)),
+    distEma200Abs:Math.abs(parseFloat(distEma200)),
     longEntry,longStop,longTP,
     shortEntry,shortStop,shortTP,
     supportLvl,resistanceLvl
@@ -1086,7 +1091,7 @@ function setTab(t,el){
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');renderCards();
 }
-const SORT_LABELS={'score':'評分','rsi':'RSI','chg':'漲跌%','volRatio':'量比','funding':'資費率','emaScore':'EMA強度'};
+const SORT_LABELS={'score':'評分','rsi':'RSI','chg':'漲跌%','volRatio':'量比','funding':'資費率','distEma99Abs':'EMA99距離','distEma200Abs':'EMA200距離'};
 function setSortKey(key,el){
   if(sortKey===key) sortDir*=-1;
   else{sortKey=key;sortDir=-1;}
