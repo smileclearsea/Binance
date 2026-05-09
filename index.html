@@ -78,10 +78,11 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .sortbar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px;
   background:var(--bg2);border-bottom:1px solid var(--border);align-items:center;}
 .sort-lbl{font-family:var(--mono);font-size:.53rem;color:var(--textlo);}
-.sort-btn{font-family:var(--mono);font-size:.53rem;padding:3px 9px;
-  border-radius:2px;border:1px solid var(--border);background:transparent;
-  color:var(--textlo);cursor:pointer;}
-.sort-btn.active{border-color:var(--neu);color:var(--neu);}
+.sort-btn{font-family:var(--mono);font-size:.55rem;padding:4px 10px;
+  border-radius:4px;border:1px solid var(--border);background:var(--bg);
+  color:var(--text);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sort-btn:active{opacity:.7;}
+.sort-btn.active{border-color:var(--neu);color:var(--neu);background:#1a5fc812;font-weight:600;}
 
 /* GRADE FILTER */
 .gradebar{display:flex;gap:6px;flex-wrap:wrap;padding:7px 14px;
@@ -115,14 +116,16 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 @keyframes sp{to{transform:rotate(360deg);}}
 .empty{padding:50px;text-align:center;color:var(--textlo);}
 
-.coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
-  cursor:pointer;border-left:3px solid transparent;animation:frow .22s ease both;
+.coin-card{border-bottom:1px solid var(--border);padding:11px 14px 11px 16px;
+  cursor:pointer;animation:frow .22s ease both;
   width:100%;overflow:hidden;box-sizing:border-box;position:relative;}
+.coin-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:transparent;transition:background .15s;}
 @keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 .coin-card:active{background:#00000008;}
-.coin-card.row-long{border-left-color:var(--long);}
-.coin-card.row-short{border-left-color:var(--short);}
-.coin-card.row-watch{border-left-color:var(--watch);}
+.coin-card.row-long::before{background:var(--long);}
+.coin-card.row-short::before{background:var(--short);}
+.coin-card.row-watch::before{background:var(--watch);}
 
 /* card-top: 幣名+價格一行，信號badge獨立右側 */
 .card-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;width:100%;}
@@ -347,12 +350,12 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 
 <div class="sortbar">
   <span class="sort-lbl">排序：</span>
-  <button class="sort-btn active" onclick="setSortKey('score',this)">評分</button>
-  <button class="sort-btn" onclick="setSortKey('rsi',this)">RSI</button>
-  <button class="sort-btn" onclick="setSortKey('chg',this)">漲跌%</button>
-  <button class="sort-btn" onclick="setSortKey('volRatio',this)">量比</button>
-  <button class="sort-btn" onclick="setSortKey('funding',this)">資費率</button>
-  <button class="sort-btn" onclick="setSortKey('emaScore',this)">EMA強度</button>
+  <button class="sort-btn active" data-key="score" onclick="setSortKey('score',this)">評分 ↓</button>
+  <button class="sort-btn" data-key="rsi" onclick="setSortKey('rsi',this)">RSI</button>
+  <button class="sort-btn" data-key="chg" onclick="setSortKey('chg',this)">漲跌%</button>
+  <button class="sort-btn" data-key="volRatio" onclick="setSortKey('volRatio',this)">量比</button>
+  <button class="sort-btn" data-key="funding" onclick="setSortKey('funding',this)">資費率</button>
+  <button class="sort-btn" data-key="emaScore" onclick="setSortKey('emaScore',this)">EMA強度</button>
 </div>
 
 <div class="gradebar">
@@ -400,10 +403,16 @@ const BATCH=5;
 let allData=[],curTab='all',sortKey='score',sortDir=-1,emaFilter='all',searchQuery='',gradeFilter='all';
 let btcTrend='neutral'; // 'bull' | 'bear' | 'neutral'
 
-// 排除美股代幣 & 金屬代幣
-const EXCLUDE_PREFIXES=['1000AAPL','AAPL','TSLA','AMZN','GOOGL','MSFT','NVDA','META','NFLX',
-  'BABA','UBER','COIN','PYPL','AMD','INTC','BIDU','JNJ','V','JPM','BAC','WMT','DIS',
-  'XAU','XAG','XPT','XPD','GOLD','SILVER','PAXG','CACHE'];
+// 排除穩定幣、美股代幣、金屬代幣
+const EXCLUDE_EXACT=[
+  // 穩定幣
+  'USDC','USDD','USDP','TUSD','BUSD','DAI','FRAX','LUSD','GUSD','FDUSD','PYUSD','EURC','EURS','EURT',
+  // 美股代幣
+  'AAPL','TSLA','AMZN','GOOGL','MSFT','NVDA','META','NFLX','BABA','UBER','COIN','PYPL',
+  'AMD','INTC','BIDU','JNJ','JPM','BAC','WMT','DIS','V','ABNB','PLTR','HOOD',
+  // 金屬代幣
+  'XAU','XAG','XPT','XPD','GOLD','SILVER','PAXG','XAUT','CACHE'
+];
 
 async function startScan(){
   const btn=document.getElementById('scanBtn');
@@ -423,8 +432,7 @@ async function startScan(){
     let usdtT=tickers.filter(t=>{
       if(!t.symbol.endsWith('USDT')) return false;
       const base=t.symbol.replace('USDT','');
-      // 排除美股 & 金屬代幣
-      if(EXCLUDE_PREFIXES.some(p=>base===p||base.startsWith(p))) return false;
+      if(EXCLUDE_EXACT.includes(base)) return false;
       return true;
     }).sort((a,b)=>parseFloat(b.quoteVolume)-parseFloat(a.quoteVolume));
     if(topN<9999)usdtT=usdtT.slice(0,topN);
@@ -1078,10 +1086,18 @@ function setTab(t,el){
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');renderCards();
 }
+const SORT_LABELS={'score':'評分','rsi':'RSI','chg':'漲跌%','volRatio':'量比','funding':'資費率','emaScore':'EMA強度'};
 function setSortKey(key,el){
-  if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=-1;}
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');renderCards();
+  if(sortKey===key) sortDir*=-1;
+  else{sortKey=key;sortDir=-1;}
+  document.querySelectorAll('.sort-btn').forEach(b=>{
+    b.classList.remove('active');
+    const k=b.getAttribute('data-key');
+    if(k) b.textContent=SORT_LABELS[k]||k;
+  });
+  el.classList.add('active');
+  el.textContent=(SORT_LABELS[key]||key)+(sortDir===-1?' ↓':' ↑');
+  renderCards();
 }
 function setLive(txt,color){
   document.getElementById('liveTxt').textContent=txt;
