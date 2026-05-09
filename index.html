@@ -116,13 +116,12 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 
 .coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
   cursor:pointer;animation:frow .22s ease both;
-  width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;
-  border-left:3px solid transparent;}
+  width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;}
 @keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 .coin-card:active{background:#00000008;}
-.coin-card.row-long{border-left-color:var(--long);}
-.coin-card.row-short{border-left-color:var(--short);}
-.coin-card.row-watch{border-left-color:var(--watch);}
+.coin-card.row-long{}
+.coin-card.row-short{}
+.coin-card.row-watch{}
 
 /* card-top: 幣名+價格一行，信號badge獨立右側 */
 .card-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;width:100%;}
