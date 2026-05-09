@@ -14,12 +14,8 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans TC',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{overflow-x:hidden;}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;
-  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:48px 48px;background-position:14px 0;
-  opacity:.2;pointer-events:none;z-index:0;}
+html,body{overflow-x:hidden;max-width:100vw;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
 
 header{position:sticky;top:0;z-index:200;background:#f0f4f8ee;
   backdrop-filter:blur(14px);border-bottom:1px solid var(--bdr2);
@@ -111,23 +107,22 @@ select{background:var(--bg2);border:1px solid var(--bdr2);color:var(--text);
 .ema-fbtn.ef-below {border-color:var(--short);color:var(--short);background:#cc113315;}
 .ema-fbtn.ef-between{border-color:var(--watch);color:var(--watch);background:#b86b0015;}
 
-.cardlist{padding:0 0 60px;overflow:hidden;width:100%;}
+.cardlist{padding:0 0 60px;width:100%;max-width:100%;overflow:hidden;}
 .load-state{padding:70px;text-align:center;color:var(--textlo);
   font-family:var(--mono);font-size:.7rem;letter-spacing:2px;}
 .spin{display:inline-block;animation:sp 1s linear infinite;margin-right:6px;}
 @keyframes sp{to{transform:rotate(360deg);}}
 .empty{padding:50px;text-align:center;color:var(--textlo);}
 
-.coin-card{border-bottom:1px solid var(--border);padding:11px 14px 11px 16px;
+.coin-card{border-bottom:1px solid var(--border);padding:11px 14px;
   cursor:pointer;animation:frow .22s ease both;
-  width:100%;overflow:hidden;box-sizing:border-box;position:relative;}
-.coin-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:transparent;transition:background .15s;}
+  width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;
+  border-left:3px solid transparent;}
 @keyframes frow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 .coin-card:active{background:#00000008;}
-.coin-card.row-long::before{background:var(--long);}
-.coin-card.row-short::before{background:var(--short);}
-.coin-card.row-watch::before{background:var(--watch);}
+.coin-card.row-long{border-left-color:var(--long);}
+.coin-card.row-short{border-left-color:var(--short);}
+.coin-card.row-watch{border-left-color:var(--watch);}
 
 /* card-top: 幣名+價格一行，信號badge獨立右側 */
 .card-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;width:100%;}
